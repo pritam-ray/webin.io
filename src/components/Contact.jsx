@@ -173,7 +173,7 @@ const Contact = () => {
               </div>
               <div>
                 <h4>Email</h4>
-                <a href="mailto:impritamray@gmail.com" className="info-link">impritamray@gmail.com</a>
+                <a href="mailto:hello@webing.io" className="info-link">hello@webing.io</a>
               </div>
             </div>
 

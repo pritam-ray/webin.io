@@ -6,7 +6,7 @@ import './About.css';
 const stats = [
   { number: 50, suffix: '+', label: 'Projects Delivered' },
   { number: 30, suffix: '+', label: 'Happy Clients' },
-  { number: 4, suffix: '', label: 'Creative Minds' },
+  { number: 5, suffix: '+', label: 'Years Experience' },
   { number: 100, suffix: '%', label: 'Client Satisfaction' },
 ];
 
@@ -58,10 +58,10 @@ const About = () => {
           >
             <h3>Our Story</h3>
             <p>
-              Born from a shared passion for design and technology, webing.io was founded by
-              Pritam and Laxmi with a simple mission: to build websites that businesses are
-              genuinely proud of. What started as two friends with big dreams has grown into a
-              tight-knit team of four creative minds, each bringing unique expertise to the table.
+              Born from a shared passion for design and technology, webing.io was founded with
+              a simple mission: to build websites that businesses are genuinely proud of. What
+              started as a vision with big dreams has grown into a tight-knit team of creative
+              minds, each bringing unique expertise to the table.
             </p>
             <p>
               We believe every brand deserves a digital presence that matches its ambition.

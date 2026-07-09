@@ -7,7 +7,6 @@ const navLinks = [
   { name: 'About', href: '#about' },
   { name: 'Services', href: '#services' },
   { name: 'Work', href: '#portfolio' },
-  { name: 'Team', href: '#team' },
   { name: 'Pricing', href: '#pricing' },
   { name: 'Contact', href: '#contact' },
 ];
@@ -176,9 +175,9 @@ const Navbar = () => {
 
                 <div className="mobile-contact-section">
                   <div className="mobile-contact-title">SAY HELLO</div>
-                  <a href="mailto:impritamray@gmail.com" className="mobile-contact-item">
+                  <a href="mailto:hello@webing.io" className="mobile-contact-item">
                     <Mail size={16} />
-                    <span>impritamray@gmail.com</span>
+                    <span>hello@webing.io</span>
                   </a>
                   <a href="tel:+919653821027" className="mobile-contact-item">
                     <Phone size={16} />

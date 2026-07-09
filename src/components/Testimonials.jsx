@@ -14,7 +14,7 @@ const testimonials = [
     gradient: 'linear-gradient(135deg, #667eea, #764ba2)',
   },
   {
-    quote: "Working with Pritam and the team was an absolute pleasure. They understood our vision from day one and delivered a product that exceeded all expectations. The attention to detail is unmatched.",
+    quote: "Working with the webing.io team was an absolute pleasure. They understood our vision from day one and delivered a product that exceeded all expectations. The attention to detail is unmatched.",
     name: 'Sneha Kapoor',
     company: 'FitPulse',
     role: 'CEO',

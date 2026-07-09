@@ -7,7 +7,6 @@ const footerLinks = {
     { name: 'About', href: '#about' },
     { name: 'Services', href: '#services' },
     { name: 'Portfolio', href: '#portfolio' },
-    { name: 'Team', href: '#team' },
   ],
   'Services': [
     { name: 'Web Design', href: '#services' },
@@ -18,7 +17,7 @@ const footerLinks = {
   'Contact': [
     { name: 'WhatsApp', href: 'https://wa.me/919653821027', external: true },
     { name: 'Call Us', href: 'tel:+919653821027', external: true },
-    { name: 'Email', href: 'mailto:impritamray@gmail.com', external: true },
+    { name: 'Email', href: 'mailto:hello@webing.io', external: true },
   ],
 };
 

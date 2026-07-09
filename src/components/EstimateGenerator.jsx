@@ -1139,7 +1139,7 @@ const EstimateGenerator = () => {
                   <h4 className="party-title">ESTIMATED BY</h4>
                   <p className="party-bold font-title">webing.io</p>
                   <p className="party-details">Enterprise Design & Development division</p>
-                  <p className="party-details">Email: impritamray@gmail.com</p>
+                  <p className="party-details">Email: hello@webing.io</p>
                 </div>
                 <div className="est-party-box text-right-aligned">
                   <h4 className="party-title">PREPARED FOR</h4>
