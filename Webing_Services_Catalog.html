@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>webing.io — Services & Pricing Catalog</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0a0a0f;
+      --card-bg: #12121a;
+      --card-border: rgba(255,255,255,0.06);
+      --accent: #6c5ce7;
+      --accent2: #00d2ff;
+      --text: #f0f0f5;
+      --text-dim: #8888a0;
+      --text-muted: #555570;
+      --green: #10b981;
+      --red: #555570;
+    }
+
+    html { font-size: 16px; }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ---- DOCUMENT WRAPPER ---- */
+    .doc {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 60px 50px;
+    }
+
+    /* ---- HEADER ---- */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 20px;
+    }
+    .logo-group { display: flex; flex-direction: column; gap: 4px; }
+    .logo {
+      display: flex; align-items: center; gap: 6px;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    .logo .icon { font-size: 1.6rem; font-weight: 900; color: var(--accent); }
+    .logo .name { font-size: 1.6rem; font-weight: 700; color: var(--text); letter-spacing: 0.04em; }
+    .logo .sub { font-size: 1.6rem; font-weight: 300; color: var(--text-dim); letter-spacing: 0.04em; }
+    .motto { font-size: 0.8rem; color: var(--text-dim); font-weight: 300; }
+
+    .header-right { text-align: right; }
+    .doc-type {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.75rem; font-weight: 600;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 4px;
+    }
+    .header-meta { font-size: 0.8rem; color: var(--text-dim); }
+    .header-meta span { color: var(--text); font-weight: 500; }
+
+    .accent-line {
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2), transparent);
+      margin-bottom: 50px;
+    }
+
+    /* ---- CONTACT ROW ---- */
+    .contact-row {
+      display: flex; justify-content: space-between; align-items: center;
+      background: var(--card-bg); border: 1px solid var(--card-border);
+      border-radius: 12px; padding: 18px 28px; margin-bottom: 50px;
+    }
+    .contact-row .item { font-size: 0.85rem; color: var(--text-dim); }
+    .contact-row .item strong { color: var(--text); font-weight: 500; }
+
+    /* ---- SECTION ---- */
+    .section { margin-bottom: 55px; page-break-inside: avoid; }
+    .section-label {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.7rem; font-weight: 600;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--accent); text-align: center; margin-bottom: 6px;
+    }
+    .section-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.75rem; font-weight: 700;
+      color: var(--text); text-align: center; margin-bottom: 8px;
+    }
+    .section-subtitle {
+      font-size: 0.9rem; color: var(--text-dim); text-align: center;
+      max-width: 650px; margin: 0 auto 35px; font-weight: 300;
+    }
+
+    /* ---- PRICING GRID ---- */
+    .cards-grid {
+      display: grid; gap: 18px;
+    }
+    .cards-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+    .cards-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+
+    /* ---- CARD ---- */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 28px 24px;
+      display: flex; flex-direction: column;
+      position: relative;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .card.popular {
+      border: 2px solid var(--accent);
+      box-shadow: 0 0 30px rgba(108, 92, 231, 0.12);
+    }
+
+    .popular-badge {
+      position: absolute; top: -11px; left: 50%; transform: translateX(-50%);
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #fff; font-size: 0.65rem; font-weight: 600;
+      padding: 4px 14px; border-radius: 999px; white-space: nowrap;
+      display: flex; align-items: center; gap: 4px;
+      box-shadow: 0 3px 12px rgba(108, 92, 231, 0.3);
+    }
+    .popular-badge svg { width: 12px; height: 12px; }
+
+    .card-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.8rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--text-dim); margin-bottom: 6px;
+    }
+    .card-price {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.85rem; font-weight: 700; color: var(--text);
+      display: flex; align-items: baseline; gap: 6px;
+      margin-bottom: 6px;
+    }
+    .card.popular .card-price { color: var(--accent); }
+    .card-price .period {
+      font-size: 0.8rem; font-weight: 400; color: var(--text-muted);
+    }
+    .card-desc {
+      font-size: 0.8rem; color: var(--text-dim); font-weight: 300;
+      margin-bottom: 18px; min-height: 36px; line-height: 1.45;
+    }
+
+    .card-divider {
+      height: 1px; background: var(--card-border); margin-bottom: 18px;
+    }
+
+    .features { list-style: none; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+    .features li {
+      display: flex; align-items: flex-start; gap: 8px;
+      font-size: 0.82rem; line-height: 1.35;
+    }
+    .features li.inc { color: var(--text); font-weight: 400; }
+    .features li.exc { color: var(--text-muted); text-decoration: line-through; opacity: 0.55; }
+
+    .features li svg {
+      flex-shrink: 0; width: 14px; height: 14px; margin-top: 2px;
+    }
+    .features li.inc svg { color: var(--green); }
+    .features li.exc svg { color: var(--text-muted); }
+
+    /* Check & X SVG icons inline */
+    .ico-check { stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+    .ico-x { stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; fill: none; }
+
+    /* ---- FOOTER ---- */
+    .footer {
+      border-top: 1px solid var(--card-border);
+      padding-top: 20px; margin-top: 30px;
+      display: flex; justify-content: space-between;
+      font-size: 0.75rem; color: var(--text-muted);
+    }
+
+    /* ---- PAGE BREAKS ---- */
+    .page-break { page-break-before: always; break-before: page; }
+
+    /* ---- PRINT ---- */
+    @media print {
+      body { background: var(--bg) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .doc { padding: 30px 35px; max-width: 100%; }
+      .card { box-shadow: none !important; }
+      .card.popular { box-shadow: none !important; border: 2px solid var(--accent) !important; }
+      .popular-badge { background: var(--accent) !important; }
+      .accent-line { background: var(--accent) !important; }
+      .section { page-break-inside: avoid; break-inside: avoid; }
+      @page { size: A4 portrait; margin: 12mm 10mm; }
+    }
+  </style>
+</head>
+<body>
+<div class="doc">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="logo-group">
+      <div class="logo">
+        <svg viewBox="0 0 100 100" width="32" height="32" style="margin-right: 8px; overflow: visible; display: inline-block; vertical-align: middle;">
+          <defs>
+            <linearGradient id="cat-logo-grad-1" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#6c5ce7" />
+              <stop offset="100%" stop-color="#a855f7" />
+            </linearGradient>
+            <linearGradient id="cat-logo-grad-2" x1="0%" y1="100%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#00d2ff" />
+              <stop offset="100%" stop-color="#0066ff" />
+            </linearGradient>
+            <filter id="cat-logo-shadow" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="-1" dy="2" stdDeviation="1.5" flood-color="#000" flood-opacity="0.4" />
+            </filter>
+          </defs>
+          <circle cx="24" cy="26" r="6" fill="#00d2ff" />
+          <path d="M 25 38 L 38 62" stroke="url(#cat-logo-grad-2)" stroke-width="11" stroke-linecap="round" />
+          <path d="M 38 62 L 52 26" stroke="url(#cat-logo-grad-1)" stroke-width="11" stroke-linecap="round" filter="url(#cat-logo-shadow)" />
+          <path d="M 52 26 L 66 62" stroke="url(#cat-logo-grad-2)" stroke-width="11" stroke-linecap="round" />
+          <path d="M 66 62 L 80 26" stroke="url(#cat-logo-grad-1)" stroke-width="11" stroke-linecap="round" filter="url(#cat-logo-shadow)" />
+        </svg>
+        <span class="name">webing</span>
+        <span class="sub">.io</span>
+      </div>
+      <p class="motto">We build premium digital engines.</p>
+    </div>
+    <div class="header-right">
+      <p class="doc-type">Services & Pricing Catalog 2026</p>
+      <p class="header-meta">Date: <span>July 2026</span></p>
+      <p class="header-meta">Email: <span>impritamray@gmail.com</span></p>
+
+    </div>
+  </div>
+  <div class="accent-line"></div>
+
+  <!-- Contact Info Bar -->
+  <div class="contact-row">
+    <div class="item"><strong>webing.io</strong> — Full-Service Digital Agency</div>
+    <div class="item">📧 <strong>impritamray@gmail.com</strong></div>
+
+  </div>
+
+  <!-- ======================================== -->
+  <!-- SECTION 1: WEBSITES -->
+  <!-- ======================================== -->
+  <div class="section">
+    <p class="section-label">— Websites —</p>
+    <h2 class="section-title">Website Design & Development</h2>
+    <p class="section-subtitle">Beautiful, responsive, conversion-optimized websites for every business need — from personal brands to full-scale e-commerce platforms.</p>
+
+    <div class="cards-grid cols-3">
+
+      <!-- Landing Page -->
+      <div class="card">
+        <p class="card-name">Landing Page</p>
+        <div class="card-price">₹8,000 <span class="period">one-time</span></div>
+        <p class="card-desc">High-converting single page for promotions, products, or lead generation.</p>
+        <div class="card-divider"></div>
+        <ul class="features">
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Single Page Design</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Mobile Responsive</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Contact / Lead Form</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Basic SEO Setup</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Social Media Links</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>WhatsApp Integration</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>2 Revisions</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Delivery: 5-7 Days</span></li>
+          <li class="exc"><svg viewBox="0 0 24 24" class="ico-x"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg><span>CMS / Admin Panel</span></li>
+          <li class="exc"><svg viewBox="0 0 24 24" class="ico-x"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg><span>Custom Animations</span></li>
+        </ul>
+      </div>
+
+      <!-- Business Website -->
+      <div class="card popular">
+        <div class="popular-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l1.5 4.5H18l-3.5 2.7 1.3 4.3L12 12l-3.8 2.5 1.3-4.3L6 7.5h4.5z"/></svg>
+          Most Popular
+        </div>
+        <p class="card-name">Business Website</p>
+        <div class="card-price">₹25,000 – ₹40,000 <span class="period">one-time</span></div>
+        <p class="card-desc">Complete multi-page website with CMS for growing businesses.</p>
+        <div class="card-divider"></div>
+        <ul class="features">
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Up to 8 Custom Pages</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Mobile & Tablet Responsive</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Contact Form + WhatsApp Chat</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Advanced SEO Optimization</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>CMS / Admin Panel</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Custom Animations & Effects</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Blog Integration</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Google Analytics</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>5 Revisions</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Delivery: 15-20 Days</span></li>
+        </ul>
+      </div>
+
+      <!-- E-Commerce -->
+      <div class="card">
+        <p class="card-name">E-Commerce Store</p>
+        <div class="card-price">₹45,000 – ₹75,000 <span class="period">one-time</span></div>
+        <p class="card-desc">Full online store with payment gateway, inventory management, and order tracking.</p>
+        <div class="card-divider"></div>
+        <ul class="features">
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Unlimited Product Pages</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Payment Gateway (Razorpay/Stripe)</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Cart, Wishlist & Checkout</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Inventory & Order Management</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Customer Account System</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Coupon & Discount Engine</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Admin Dashboard</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>SEO & Speed Optimized</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>1 Month Free Support</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Delivery: 25-35 Days</span></li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- More Website Types -->
+  <div class="section">
+    <div class="cards-grid cols-3">
+      <!-- Portfolio Website -->
+      <div class="card">
+        <p class="card-name">Portfolio Website</p>
+        <div class="card-price">₹10,000 – ₹18,000 <span class="period">one-time</span></div>
+        <p class="card-desc">Showcase your work, projects, or art with a beautiful portfolio website.</p>
+        <div class="card-divider"></div>
+        <ul class="features">
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Project / Gallery Showcase</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>About & Resume Section</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Mobile Responsive</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Smooth Animations</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Contact Form</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>SEO Optimized</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>3 Revisions</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Delivery: 7-10 Days</span></li>
+        </ul>
+      </div>
+
+      <!-- Blog / News Portal -->
+      <div class="card">
+        <p class="card-name">Blog / News Portal</p>
+        <div class="card-price">₹15,000 – ₹28,000 <span class="period">one-time</span></div>
+        <p class="card-desc">Content-rich websites for bloggers, publishers, or media organizations.</p>
+        <div class="card-divider"></div>
+        <ul class="features">
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Custom CMS Blog Engine</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Categories & Tags System</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Author & Commenting</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Newsletter Signup</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Social Sharing Integration</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Advanced SEO (Schema Markup)</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Admin Dashboard</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Delivery: 12-18 Days</span></li>
+        </ul>
+      </div>
+
+      <!-- Educational / LMS -->
+      <div class="card">
+        <p class="card-name">Educational / LMS Website</p>
+        <div class="card-price">₹50,000 – ₹90,000 <span class="period">one-time</span></div>
+        <p class="card-desc">Course-selling platforms with student dashboards, video hosting, and certificates.</p>
+        <div class="card-divider"></div>
+        <ul class="features">
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Course Listing & Categories</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Video Lesson Player</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Student Dashboard & Progress</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Payment Integration</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Quiz & Certificate Generation</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Instructor Admin Panel</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Mobile Responsive</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Delivery: 30-45 Days</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE BREAK -->
+  <div class="page-break"></div>
+
+  <!-- ======================================== -->
+  <!-- SECTION 2: WEB APPLICATIONS -->
+  <!-- ======================================== -->
+  <div class="section">
+    <p class="section-label">— Web Applications —</p>
+    <h2 class="section-title">Custom Web Applications</h2>
+    <p class="section-subtitle">Powerful, scalable web applications built with modern frameworks — React, Node.js, Next.js — tailored to your exact business workflow.</p>
+
+    <div class="cards-grid cols-3">
+
+      <!-- Admin Panel / Dashboard -->
+      <div class="card">
+        <p class="card-name">Admin Panel / Dashboard</p>
+        <div class="card-price">₹30,000 – ₹55,000 <span class="period">one-time</span></div>
+        <p class="card-desc">Custom admin interfaces to manage content, users, orders, and analytics.</p>
+        <div class="card-divider"></div>
+        <ul class="features">
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Custom Dashboard UI</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>User Role Management</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Data Tables & Filters</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Charts & Analytics Widgets</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>REST API Integration</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Export (CSV, PDF)</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Delivery: 15-25 Days</span></li>
+        </ul>
+      </div>
+
+      <!-- Booking / Appointment -->
+      <div class="card popular">
+        <div class="popular-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l1.5 4.5H18l-3.5 2.7 1.3 4.3L12 12l-3.8 2.5 1.3-4.3L6 7.5h4.5z"/></svg>
+          Popular
+        </div>
+        <p class="card-name">Booking / Appointment System</p>
+        <div class="card-price">₹25,000 – ₹45,000 <span class="period">one-time</span></div>
+        <p class="card-desc">Online scheduling for clinics, salons, consultants, and service businesses.</p>
+        <div class="card-divider"></div>
+        <ul class="features">
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Calendar & Slot Management</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Email & SMS Notifications</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Online Payment Booking</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Customer Account Portal</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Staff / Resource Allocation</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Admin Dashboard</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>WhatsApp Reminders</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Delivery: 20-30 Days</span></li>
+        </ul>
+      </div>
+
+      <!-- SaaS Platform -->
+      <div class="card">
+        <p class="card-name">SaaS / Custom Platform</p>
+        <div class="card-price">₹80,000 – ₹2,00,000+ <span class="period">project</span></div>
+        <p class="card-desc">Full-scale multi-tenant SaaS applications with subscription billing and APIs.</p>
+        <div class="card-divider"></div>
+        <ul class="features">
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Multi-Tenant Architecture</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Subscription & Billing Module</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>User Auth (OAuth, JWT)</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>REST / GraphQL APIs</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Cloud Deployment (AWS/GCP)</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Analytics Dashboard</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>3 Months Support</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Delivery: 45-90 Days</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE BREAK -->
+  <div class="page-break"></div>
+
+  <!-- ======================================== -->
+  <!-- SECTION 3: MOBILE APPS -->
+  <!-- ======================================== -->
+  <div class="section">
+    <p class="section-label">— Mobile Apps —</p>
+    <h2 class="section-title">Mobile App Development</h2>
+    <p class="section-subtitle">Native and cross-platform mobile applications for Android and iOS — from MVPs to full-featured enterprise apps.</p>
+
+    <div class="cards-grid cols-3">
+
+      <!-- Android App -->
+      <div class="card">
+        <p class="card-name">Android App</p>
+        <div class="card-price">₹40,000 – ₹80,000 <span class="period">one-time</span></div>
+        <p class="card-desc">Native Android application built with Kotlin/Java for Play Store publishing.</p>
+        <div class="card-divider"></div>
+        <ul class="features">
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Native Kotlin/Java Development</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Material Design UI</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>API Integration</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Push Notifications</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Play Store Deployment</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Admin Panel (Web)</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>1 Month Free Bug Support</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Delivery: 30-50 Days</span></li>
+        </ul>
+      </div>
+
+      <!-- iOS App -->
+      <div class="card">
+        <p class="card-name">iOS App</p>
+        <div class="card-price">₹50,000 – ₹1,00,000 <span class="period">one-time</span></div>
+        <p class="card-desc">Native iPhone/iPad application built with Swift for App Store publishing.</p>
+        <div class="card-divider"></div>
+        <ul class="features">
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Native Swift Development</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Apple Human Interface Design</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>API Integration</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Push Notifications</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>App Store Deployment</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Admin Panel (Web)</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>1 Month Free Bug Support</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Delivery: 35-55 Days</span></li>
+        </ul>
+      </div>
+
+      <!-- Cross Platform -->
+      <div class="card popular">
+        <div class="popular-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l1.5 4.5H18l-3.5 2.7 1.3 4.3L12 12l-3.8 2.5 1.3-4.3L6 7.5h4.5z"/></svg>
+          Best Value
+        </div>
+        <p class="card-name">Cross-Platform App</p>
+        <div class="card-price">₹60,000 – ₹1,20,000 <span class="period">one-time</span></div>
+        <p class="card-desc">One codebase for both Android & iOS using React Native or Flutter.</p>
+        <div class="card-divider"></div>
+        <ul class="features">
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>React Native / Flutter</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Android + iOS from Single Code</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Push Notifications</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Payment Integration</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Play Store + App Store</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Backend API + Admin Panel</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>2 Months Free Support</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Delivery: 40-60 Days</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE BREAK -->
+  <div class="page-break"></div>
+
+  <!-- ======================================== -->
+  <!-- SECTION 4: CRM & BUSINESS SOFTWARE -->
+  <!-- ======================================== -->
+  <div class="section">
+    <p class="section-label">— Business Software —</p>
+    <h2 class="section-title">CRM, ERP & Business Software</h2>
+    <p class="section-subtitle">Custom-built business management systems — CRMs, inventory trackers, HR tools, and enterprise resource planning platforms.</p>
+
+    <div class="cards-grid cols-2">
+
+      <!-- CRM -->
+      <div class="card popular">
+        <div class="popular-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l1.5 4.5H18l-3.5 2.7 1.3 4.3L12 12l-3.8 2.5 1.3-4.3L6 7.5h4.5z"/></svg>
+          High Demand
+        </div>
+        <p class="card-name">Custom CRM System</p>
+        <div class="card-price">₹60,000 – ₹1,50,000 <span class="period">project</span></div>
+        <p class="card-desc">Track leads, clients, deals, follow-ups, and revenue analytics — built for your exact sales workflow.</p>
+        <div class="card-divider"></div>
+        <ul class="features">
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Lead & Contact Management</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Deal / Sales Pipeline Tracking</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Task & Follow-up Reminders</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Email & WhatsApp Integration</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Reports & Revenue Analytics</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Multi-User Role Access</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Cloud Hosted / Self-Hosted</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Delivery: 35-60 Days</span></li>
+        </ul>
+      </div>
+
+      <!-- Inventory Management -->
+      <div class="card">
+        <p class="card-name">Inventory Management System</p>
+        <div class="card-price">₹40,000 – ₹80,000 <span class="period">project</span></div>
+        <p class="card-desc">Track stock levels, purchase orders, suppliers, and warehouse operations in real-time.</p>
+        <div class="card-divider"></div>
+        <ul class="features">
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Stock Level Tracking</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Barcode / QR Code Scanner</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Purchase Order Management</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Supplier Database</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Low Stock Alerts</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Reports & Export</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Multi-Location Support</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Delivery: 25-40 Days</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="cards-grid cols-2">
+      <!-- HR / Payroll -->
+      <div class="card">
+        <p class="card-name">HR & Payroll Management</p>
+        <div class="card-price">₹50,000 – ₹1,00,000 <span class="period">project</span></div>
+        <p class="card-desc">Employee management, attendance, leave tracking, and automated payroll computation.</p>
+        <div class="card-divider"></div>
+        <ul class="features">
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Employee Database & Profiles</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Attendance & Leave Tracker</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Payroll & Salary Computation</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Payslip PDF Generation</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Performance Reviews</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Employee Self-Service Portal</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Delivery: 30-50 Days</span></li>
+        </ul>
+      </div>
+
+      <!-- ERP -->
+      <div class="card">
+        <p class="card-name">ERP Solutions</p>
+        <div class="card-price">₹1,50,000+ <span class="period">custom scope</span></div>
+        <p class="card-desc">Enterprise-grade all-in-one business management — finance, HR, supply chain, and operations.</p>
+        <div class="card-divider"></div>
+        <ul class="features">
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Modular Architecture</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Finance & Accounting Module</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Supply Chain & Procurement</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>HR & Payroll Integration</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Custom Reports & BI</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Multi-Branch / Multi-User</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>3 Months Dedicated Support</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Delivery: 60-120 Days</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE BREAK -->
+  <div class="page-break"></div>
+
+  <!-- ======================================== -->
+  <!-- SECTION 5: UI/UX DESIGN & BRANDING -->
+  <!-- ======================================== -->
+  <div class="section">
+    <p class="section-label">— Design & Branding —</p>
+    <h2 class="section-title">UI/UX Design & Brand Identity</h2>
+    <p class="section-subtitle">Stunning visual designs that convert visitors into customers — from wireframes to complete brand systems.</p>
+
+    <div class="cards-grid cols-3">
+
+      <!-- Logo & Brand Identity -->
+      <div class="card">
+        <p class="card-name">Logo & Brand Identity</p>
+        <div class="card-price">₹5,000 – ₹15,000 <span class="period">one-time</span></div>
+        <p class="card-desc">Professional logo design with complete brand kit including colors, typography, and social assets.</p>
+        <div class="card-divider"></div>
+        <ul class="features">
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>3 Logo Concepts</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Color Palette & Typography</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Business Card Design</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Social Media Profile Kit</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Source Files (AI, SVG, PNG)</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>3 Revisions</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Delivery: 5-7 Days</span></li>
+        </ul>
+      </div>
+
+      <!-- UI/UX Design -->
+      <div class="card popular">
+        <div class="popular-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l1.5 4.5H18l-3.5 2.7 1.3 4.3L12 12l-3.8 2.5 1.3-4.3L6 7.5h4.5z"/></svg>
+          Recommended
+        </div>
+        <p class="card-name">UI/UX Design Package</p>
+        <div class="card-price">₹15,000 – ₹35,000 <span class="period">one-time</span></div>
+        <p class="card-desc">Complete Figma design system with wireframes, prototypes, and developer-ready specs.</p>
+        <div class="card-divider"></div>
+        <ul class="features">
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>User Research & Wireframing</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>High-Fidelity UI Mockups</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Interactive Prototyping (Figma)</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Component Design System</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Mobile + Desktop Layouts</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Dev Handoff Ready Specs</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>5 Revisions</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Delivery: 10-15 Days</span></li>
+        </ul>
+      </div>
+
+      <!-- Social Media Creatives -->
+      <div class="card">
+        <p class="card-name">Social Media Creatives</p>
+        <div class="card-price">₹8,000 – ₹15,000 <span class="period">per month</span></div>
+        <p class="card-desc">Professionally designed posts, stories, reels covers, and ad creatives for your brand.</p>
+        <div class="card-divider"></div>
+        <ul class="features">
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>15-20 Post Designs / Month</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Story & Reel Cover Templates</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Brand Consistency</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Content Calendar Planning</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Editable Canva/Figma Files</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>2 Revisions Per Design</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Delivered Weekly</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================== -->
+  <!-- SECTION 6: MAINTENANCE & RETAINER -->
+  <!-- ======================================== -->
+  <div class="section">
+    <p class="section-label">— Ongoing Support —</p>
+    <h2 class="section-title">Maintenance & Retainer Plans</h2>
+    <p class="section-subtitle">Keep your digital products running smoothly with dedicated monthly support, bug fixes, updates, and feature improvements.</p>
+
+    <div class="cards-grid cols-3">
+
+      <div class="card">
+        <p class="card-name">Basic Maintenance</p>
+        <div class="card-price">₹5,000 <span class="period">per month</span></div>
+        <p class="card-desc">Essential upkeep for small websites and landing pages.</p>
+        <div class="card-divider"></div>
+        <ul class="features">
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Bug Fixes & Patches</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Content Updates (5/mo)</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Security Monitoring</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Monthly Backup</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Email Support</span></li>
+          <li class="exc"><svg viewBox="0 0 24 24" class="ico-x"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg><span>New Feature Development</span></li>
+          <li class="exc"><svg viewBox="0 0 24 24" class="ico-x"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg><span>Priority Support</span></li>
+        </ul>
+      </div>
+
+      <div class="card popular">
+        <div class="popular-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l1.5 4.5H18l-3.5 2.7 1.3 4.3L12 12l-3.8 2.5 1.3-4.3L6 7.5h4.5z"/></svg>
+          Best Value
+        </div>
+        <p class="card-name">Growth Retainer</p>
+        <div class="card-price">₹12,000 <span class="period">per month</span></div>
+        <p class="card-desc">Ongoing improvements, new features, and priority support for growing businesses.</p>
+        <div class="card-divider"></div>
+        <ul class="features">
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Everything in Basic</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>15 Hours Dev Time / Month</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>New Feature Development</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Performance Optimization</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Priority WhatsApp Support</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Monthly Analytics Report</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Weekly Backups</span></li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <p class="card-name">Enterprise Retainer</p>
+        <div class="card-price">₹25,000+ <span class="period">per month</span></div>
+        <p class="card-desc">Dedicated developer allocation with SLA-backed response times for large-scale systems.</p>
+        <div class="card-divider"></div>
+        <ul class="features">
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Everything in Growth</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Dedicated Developer Hours</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>SLA-Based Response Times</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Architecture Consulting</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Server & DB Management</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>CI/CD Pipeline Setup</span></li>
+          <li class="inc"><svg viewBox="0 0 24 24" class="ico-check"><polyline points="20 6 9 17 4 12"/></svg><span>Daily Backups</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <span>Confidential Business Document · webing.io Private Limited</span>
+    <span>Services & Pricing Catalog · July 2026</span>
+  </div>
+
+</div>
+</body>
+</html>

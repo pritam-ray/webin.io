@@ -1,0 +1,113 @@
+.process {
+  padding: var(--section-padding);
+  background: var(--bg-secondary);
+  position: relative;
+}
+
+.process-timeline {
+  max-width: 700px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.process-step {
+  display: flex;
+  gap: 32px;
+}
+
+.step-connector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+  width: 24px;
+}
+
+.step-dot {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid var(--accent-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: var(--bg-secondary);
+  z-index: 2;
+}
+
+.step-dot-inner {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--accent-gradient);
+}
+
+.step-line {
+  width: 2px;
+  flex: 1;
+  background: linear-gradient(to bottom, var(--accent-primary), rgba(108, 92, 231, 0.1));
+  margin: 4px 0;
+}
+
+.step-content {
+  padding: 28px;
+  border-radius: var(--radius-lg);
+  margin-bottom: 24px;
+  flex: 1;
+  transition: all var(--transition-medium);
+}
+
+.step-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.step-number {
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  font-weight: 700;
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  opacity: 0.4;
+}
+
+.step-icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  background: rgba(108, 92, 231, 0.1);
+  border: 1px solid rgba(108, 92, 231, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-primary);
+}
+
+.step-title {
+  font-size: 1.3rem;
+  margin-bottom: 10px;
+  color: var(--text-primary);
+}
+
+.step-description {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+@media (max-width: 600px) {
+  .process-step {
+    gap: 20px;
+  }
+
+  .step-content {
+    padding: 20px;
+  }
+}

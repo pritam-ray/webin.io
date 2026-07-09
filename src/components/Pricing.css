@@ -1,0 +1,143 @@
+.pricing {
+  padding: var(--section-padding);
+  position: relative;
+}
+
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  align-items: stretch;
+}
+
+.pricing-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 36px 28px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: all var(--transition-medium);
+}
+
+.pricing-card:hover {
+  border-color: var(--border-hover);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+}
+
+.pricing-card.popular {
+  border-color: var(--accent-primary);
+  background: linear-gradient(170deg, rgba(108, 92, 231, 0.08) 0%, var(--bg-card) 40%);
+  box-shadow: 0 0 40px rgba(108, 92, 231, 0.15);
+}
+
+.popular-badge {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--accent-gradient);
+  color: white;
+  padding: 6px 20px;
+  border-radius: var(--radius-full);
+  font-size: 0.8rem;
+  font-weight: 600;
+  font-family: var(--font-heading);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.pricing-header {
+  margin-bottom: 28px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--border);
+}
+
+.plan-name {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.plan-price {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.price-amount {
+  font-family: var(--font-heading);
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.price-period {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.plan-description {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.pricing-features {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.pricing-feature {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+}
+
+.pricing-feature.included {
+  color: var(--text-secondary);
+}
+
+.pricing-feature.excluded {
+  color: var(--text-muted);
+  opacity: 0.5;
+}
+
+.feature-check {
+  color: #43e97b;
+  flex-shrink: 0;
+}
+
+.feature-x {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.pricing-cta {
+  width: 100%;
+  justify-content: center;
+  margin-top: auto;
+}
+
+@media (max-width: 900px) {
+  .pricing-grid {
+    grid-template-columns: 1fr;
+    max-width: 440px;
+    margin: 0 auto;
+  }
+
+  .pricing-card.popular {
+    order: -1;
+  }
+}

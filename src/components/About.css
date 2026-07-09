@@ -1,0 +1,126 @@
+.about {
+  padding: var(--section-padding);
+  position: relative;
+  overflow: hidden;
+}
+
+.about-glow-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.about-orb-1 {
+  width: 400px;
+  height: 400px;
+  background: rgba(108, 92, 231, 0.1);
+  top: 10%;
+  right: -10%;
+}
+
+.about-orb-2 {
+  width: 300px;
+  height: 300px;
+  background: rgba(0, 210, 255, 0.08);
+  bottom: 10%;
+  left: -5%;
+}
+
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: start;
+}
+
+.about-story h3 {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  color: var(--text-primary);
+}
+
+.about-story p {
+  font-size: 1.05rem;
+  margin-bottom: 20px;
+  color: var(--text-secondary);
+  line-height: 1.8;
+}
+
+.about-philosophy {
+  margin-top: 32px;
+  display: flex;
+  gap: 20px;
+}
+
+.philosophy-line {
+  width: 3px;
+  min-height: 100%;
+  background: var(--accent-gradient);
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.about-philosophy blockquote {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  color: var(--text-accent);
+  font-style: italic;
+  line-height: 1.6;
+  font-weight: 500;
+}
+
+.about-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.stat-card {
+  padding: 32px 24px;
+  border-radius: var(--radius-lg);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: all var(--transition-medium);
+}
+
+.stat-number {
+  font-family: var(--font-heading);
+  font-size: 2.5rem;
+  font-weight: 700;
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+@media (max-width: 900px) {
+  .about-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .about-stats-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .stat-card {
+    padding: 24px 16px;
+  }
+
+  .stat-number {
+    font-size: 2rem;
+  }
+}
