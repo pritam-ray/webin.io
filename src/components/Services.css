@@ -78,9 +78,24 @@
 @media (max-width: 600px) {
   .services-grid {
     grid-template-columns: 1fr;
+    gap: 16px;
   }
 
   .service-card {
-    padding: 28px 24px;
+    padding: 24px 20px;
+  }
+
+  .service-icon-wrapper {
+    width: 42px;
+    height: 42px;
+    margin-bottom: 16px;
+  }
+
+  .service-title {
+    font-size: 1.1rem;
+  }
+
+  .service-description {
+    font-size: 0.9rem;
   }
 }

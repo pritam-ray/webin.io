@@ -1200,7 +1200,55 @@
   }
 }
 
+@media (max-width: 768px) {
+  .est-control-panel-header {
+    padding: 1rem 1rem;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .est-gradient-title {
+    font-size: 1.25rem;
+  }
+
+  .est-header-actions {
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .est-action-btn {
+    padding: 0.6rem 0.9rem;
+    font-size: 0.8rem;
+    flex: 1;
+    min-width: 0;
+    justify-content: center;
+  }
+
+  .est-import-btn {
+    padding: 0.6rem 0.9rem;
+    font-size: 0.8rem;
+  }
+
+  .est-editor-column {
+    padding: 1.25rem;
+    gap: 1.25rem;
+  }
+
+  .est-editor-card {
+    padding: 1.25rem;
+  }
+
+  .packages-brochure-sheet {
+    padding: 20px 16px !important;
+  }
+}
+
 @media (max-width: 600px) {
+  .est-control-panel-header {
+    padding: 0.75rem;
+  }
+
   .est-paper-header {
     flex-direction: column;
     align-items: flex-start;
@@ -1226,6 +1274,32 @@
   
   .est-paper-logo {
     margin-bottom: 5px;
+  }
+
+  .est-editor-column {
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .est-editor-card {
+    padding: 1rem;
+  }
+
+  .est-card-title {
+    font-size: 1rem;
+  }
+
+  .est-gradient-title {
+    font-size: 1.1rem;
+  }
+
+  .est-action-btn {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.75rem;
+  }
+
+  .est-back-link {
+    font-size: 0.75rem;
   }
 }
 

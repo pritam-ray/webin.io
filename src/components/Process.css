@@ -113,10 +113,46 @@
 
 @media (max-width: 600px) {
   .process-step {
-    gap: 20px;
+    gap: 16px;
   }
 
   .step-content {
-    padding: 20px;
+    padding: 18px;
+    margin-bottom: 18px;
+  }
+
+  .step-title {
+    font-size: 1.1rem;
+  }
+
+  .step-description {
+    font-size: 0.9rem;
+  }
+
+  .step-number {
+    font-size: 1.4rem;
+  }
+
+  .step-icon-wrap {
+    width: 36px;
+    height: 36px;
+  }
+
+  .step-header {
+    margin-bottom: 12px;
+  }
+
+  .step-connector {
+    width: 20px;
+  }
+
+  .step-dot {
+    width: 20px;
+    height: 20px;
+  }
+
+  .step-dot-inner {
+    width: 8px;
+    height: 8px;
   }
 }

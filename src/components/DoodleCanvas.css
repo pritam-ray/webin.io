@@ -261,12 +261,22 @@
 
 @media (max-width: 768px) {
   .canvas-wrapper {
-    height: 350px;
+    height: 300px;
   }
   
   .doodle-toolbar {
-    gap: 12px;
-    padding: 12px;
+    gap: 10px;
+    padding: 12px 14px;
+    flex-wrap: wrap;
+  }
+
+  .tool-group {
+    gap: 6px;
+  }
+
+  .tool-btn {
+    padding: 6px 10px;
+    font-size: 0.7rem;
   }
 
   .toolbar-actions {
@@ -277,5 +287,49 @@
 
   .divider-line {
     display: none;
+  }
+
+  .color-palette-group,
+  .brush-size-group {
+    width: 100%;
+  }
+
+  .group-label {
+    font-size: 0.65rem;
+  }
+
+  .color-dot {
+    width: 20px;
+    height: 20px;
+  }
+
+  .size-btn {
+    width: 24px;
+    height: 24px;
+  }
+
+  .action-btn {
+    padding: 6px 10px;
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .canvas-wrapper {
+    height: 250px;
+  }
+
+  .doodle-toolbar {
+    padding: 10px 12px;
+    gap: 8px;
+  }
+
+  .doodle-header {
+    margin-bottom: 32px;
+  }
+
+  .doodle-subtitle {
+    font-size: 0.9rem;
+    padding: 0 8px;
   }
 }

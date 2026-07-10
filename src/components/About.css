@@ -98,14 +98,35 @@
 @media (max-width: 480px) {
   .about-stats-grid {
     grid-template-columns: 1fr 1fr;
-    gap: 16px;
+    gap: 12px;
   }
 
   .stat-card {
-    padding: 24px 16px;
+    padding: 20px 12px;
   }
 
   .stat-number {
-    font-size: 2.2rem;
+    font-size: 2rem;
+  }
+
+  .stat-label {
+    font-size: 0.65rem;
+  }
+
+  .about-story h3 {
+    font-size: 1.4rem;
+  }
+
+  .about-story p {
+    font-size: 0.95rem;
+  }
+
+  .about-philosophy {
+    padding: 16px;
+    gap: 14px;
+  }
+
+  .about-philosophy blockquote {
+    font-size: 0.9rem;
   }
 }

@@ -153,3 +153,36 @@
     order: -1;
   }
 }
+
+@media (max-width: 480px) {
+  .pricing-grid {
+    max-width: 100%;
+  }
+
+  .pricing-card {
+    padding: 28px 20px;
+  }
+
+  .price-amount {
+    font-size: 2rem;
+  }
+
+  .plan-description {
+    font-size: 0.85rem;
+  }
+
+  .pricing-feature {
+    font-size: 0.85rem;
+    gap: 8px;
+  }
+
+  .pricing-cta {
+    padding: 14px;
+    font-size: 0.85rem;
+  }
+
+  .popular-badge {
+    font-size: 0.65rem;
+    padding: 3px 12px;
+  }
+}

@@ -307,3 +307,37 @@
     display: flex;
   }
 }
+
+@media (max-width: 480px) {
+  .mobile-menu-wrapper {
+    padding: 90px 16px 32px;
+    gap: 28px;
+  }
+
+  .mobile-link {
+    font-size: clamp(1.4rem, 5vw, 2rem);
+    padding: 8px 12px;
+  }
+
+  .mobile-contact-item {
+    font-size: 0.85rem;
+    gap: 10px;
+  }
+
+  .mobile-contact-title {
+    font-size: 0.7rem;
+  }
+
+  .mobile-menu-meta {
+    padding-bottom: 14px;
+  }
+
+  .status-text,
+  .mobile-menu-clock {
+    font-size: 0.65rem;
+  }
+
+  .logo-text {
+    font-size: 1.3rem;
+  }
+}
