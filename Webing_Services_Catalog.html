@@ -192,11 +192,10 @@
     @media print {
       body { background: var(--bg) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       .doc { padding: 30px 35px; max-width: 100%; }
-      .card { box-shadow: none !important; }
+      .card { box-shadow: none !important; page-break-inside: avoid; break-inside: avoid; }
       .card.popular { box-shadow: none !important; border: 2px solid var(--accent) !important; }
       .popular-badge { background: var(--accent) !important; }
       .accent-line { background: var(--accent) !important; }
-      .section { page-break-inside: avoid; break-inside: avoid; }
       @page { size: A4 portrait; margin: 12mm 10mm; }
     }
   </style>
