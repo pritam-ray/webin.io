@@ -1,6 +1,7 @@
 .process {
   padding: var(--section-padding);
-  background: var(--bg-secondary);
+  background: var(--bg-primary);
+  border-top: var(--brutal-border);
   position: relative;
 }
 
@@ -29,12 +30,12 @@
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  border: 2px solid var(--accent-primary);
+  border: 2px solid var(--border-color);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  background: var(--bg-secondary);
+  background: var(--accent-yellow);
   z-index: 2;
 }
 
@@ -42,22 +43,30 @@
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: var(--accent-gradient);
+  background: var(--accent-primary);
 }
 
 .step-line {
-  width: 2px;
+  width: 3px;
   flex: 1;
-  background: linear-gradient(to bottom, var(--accent-primary), rgba(108, 92, 231, 0.1));
+  background: var(--border-color);
   margin: 4px 0;
 }
 
 .step-content {
   padding: 28px;
-  border-radius: var(--radius-lg);
+  background: var(--bg-secondary);
+  border: var(--brutal-border);
+  box-shadow: var(--brutal-shadow-sm);
+  border-radius: 4px;
   margin-bottom: 24px;
   flex: 1;
-  transition: all var(--transition-medium);
+  transition: all var(--transition-fast);
+}
+
+.step-content:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--brutal-shadow);
 }
 
 .step-header {
@@ -68,30 +77,30 @@
 }
 
 .step-number {
-  font-family: var(--font-heading);
-  font-size: 2rem;
+  font-family: var(--font-mono);
+  font-size: 1.8rem;
   font-weight: 700;
-  background: var(--accent-gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  opacity: 0.4;
+  color: var(--border-color);
+  opacity: 0.35;
 }
 
 .step-icon-wrap {
   width: 44px;
   height: 44px;
-  border-radius: var(--radius-md);
-  background: rgba(108, 92, 231, 0.1);
-  border: 1px solid rgba(108, 92, 231, 0.2);
+  border-radius: 4px;
+  background: var(--accent-yellow);
+  border: 2px solid var(--border-color);
+  box-shadow: 2px 2px 0px var(--border-color);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--accent-primary);
+  color: var(--text-primary);
 }
 
 .step-title {
+  font-family: var(--font-heading);
   font-size: 1.3rem;
+  text-transform: uppercase;
   margin-bottom: 10px;
   color: var(--text-primary);
 }
@@ -99,7 +108,7 @@
 .step-description {
   font-size: 0.95rem;
   color: var(--text-secondary);
-  line-height: 1.7;
+  line-height: 1.5;
 }
 
 @media (max-width: 600px) {

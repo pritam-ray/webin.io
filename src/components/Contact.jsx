@@ -26,9 +26,6 @@ const Contact = () => {
 
   return (
     <section className="contact" id="contact">
-      <div className="contact-glow-orb contact-orb-1" />
-      <div className="contact-glow-orb contact-orb-2" />
-
       <div className="container">
         <SectionHeading
           label="Get In Touch"

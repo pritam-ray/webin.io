@@ -38,9 +38,6 @@ const CountUp = ({ target, suffix }) => {
 const About = () => {
   return (
     <section className="about" id="about">
-      <div className="about-glow-orb about-orb-1" />
-      <div className="about-glow-orb about-orb-2" />
-
       <div className="container">
         <SectionHeading
           label="About Us"

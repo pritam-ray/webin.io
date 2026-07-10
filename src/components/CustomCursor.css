@@ -1,15 +1,14 @@
 .custom-cursor {
   position: fixed;
-  width: 40px;
-  height: 40px;
-  border: 1.5px solid rgba(108, 92, 231, 0.5);
+  width: 32px;
+  height: 32px;
+  border: 2px solid var(--border-color);
   border-radius: 50%;
   pointer-events: none;
   z-index: var(--z-cursor);
   transform: translate(-50%, -50%);
-  transition: width 0.3s ease, height 0.3s ease, border-color 0.3s ease, background 0.3s ease;
+  transition: width 0.2s var(--transition-fast), height 0.2s var(--transition-fast), border-color 0.2s var(--transition-fast), background 0.2s var(--transition-fast);
   opacity: 0;
-  mix-blend-mode: difference;
 }
 
 .custom-cursor.visible {
@@ -17,10 +16,10 @@
 }
 
 .custom-cursor.hovering {
-  width: 60px;
-  height: 60px;
-  border-color: var(--accent-secondary);
-  background: rgba(108, 92, 231, 0.08);
+  width: 48px;
+  height: 48px;
+  border-color: var(--accent-primary);
+  background: rgba(242, 92, 39, 0.08);
 }
 
 .custom-cursor-dot {
@@ -41,7 +40,7 @@
 }
 
 .custom-cursor-dot.hovering {
-  transform: translate(-50%, -50%) scale(2);
+  transform: translate(-50%, -50%) scale(1.5);
   background: var(--accent-secondary);
 }
 

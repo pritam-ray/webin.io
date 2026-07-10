@@ -5,6 +5,7 @@ import About from './components/About';
 import Services from './components/Services';
 import Portfolio from './components/Portfolio';
 import Process from './components/Process';
+import DoodleCanvas from './components/DoodleCanvas';
 import Testimonials from './components/Testimonials';
 import Pricing from './components/Pricing';
 import Contact from './components/Contact';
@@ -33,6 +34,7 @@ function App() {
         <Services />
         <Portfolio />
         <Process />
+        <DoodleCanvas />
         <Testimonials />
         <Pricing />
         <Contact />

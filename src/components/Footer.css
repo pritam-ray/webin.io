@@ -1,7 +1,7 @@
 .footer {
   padding: 80px 0 0;
   background: var(--bg-primary);
-  border-top: 1px solid var(--border);
+  border-top: var(--brutal-border);
 }
 
 .footer-top {
@@ -24,13 +24,14 @@
 .footer-tagline {
   font-size: 0.95rem;
   color: var(--text-secondary);
-  line-height: 1.7;
+  line-height: 1.6;
   margin-bottom: 24px;
 }
 
 .footer-cta {
-  font-size: 0.85rem;
-  padding: 12px 24px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 10px 22px;
 }
 
 .footer-links-grid {
@@ -40,12 +41,12 @@
 }
 
 .footer-link-title {
-  font-size: 0.85rem;
-  font-weight: 600;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 700;
   color: var(--text-primary);
   margin-bottom: 16px;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
 }
 
 .footer-link {
@@ -55,11 +56,12 @@
   font-size: 0.9rem;
   color: var(--text-secondary);
   padding: 6px 0;
-  transition: color var(--transition-fast);
+  transition: all var(--transition-fast);
 }
 
 .footer-link:hover {
-  color: var(--accent-secondary);
+  color: var(--accent-primary);
+  transform: translateX(4px);
 }
 
 .footer-bottom {
@@ -67,20 +69,24 @@
   align-items: center;
   justify-content: space-between;
   padding: 24px 0;
-  border-top: 1px solid var(--border);
+  border-top: var(--brutal-border);
 }
 
 .footer-copyright {
-  font-size: 0.85rem;
-  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-secondary);
 }
 
 .footer-made-with {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 0.85rem;
-  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-secondary);
 }
 
 @media (max-width: 900px) {

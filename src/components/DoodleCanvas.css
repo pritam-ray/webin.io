@@ -1,0 +1,281 @@
+.doodle-section {
+  padding: var(--section-padding);
+  background: var(--bg-primary);
+  border-top: var(--brutal-border);
+  position: relative;
+  overflow: hidden;
+}
+
+.doodle-header {
+  text-align: center;
+  margin-bottom: 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.doodle-badge {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 4px 10px;
+  background: var(--accent-yellow);
+  border: var(--brutal-border);
+  border-width: 2px;
+  transform: rotate(-2deg);
+}
+
+.doodle-title {
+  text-transform: uppercase;
+  margin: 10px 0;
+}
+
+.doodle-subtitle {
+  max-width: 600px;
+  font-size: 1rem;
+  margin: 0 auto;
+}
+
+/* Brutalist Editor Board */
+.doodle-editor-card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+/* Toolbar */
+.doodle-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  background: var(--bg-primary);
+  border-bottom: var(--brutal-border);
+}
+
+.tool-group {
+  display: flex;
+  gap: 8px;
+}
+
+.tool-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: #ffffff;
+  color: var(--text-primary);
+  border: var(--brutal-border);
+  border-width: 2px;
+  box-shadow: 2px 2px 0px var(--border-color);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  transition: all var(--transition-fast);
+}
+
+.tool-btn.active {
+  background: var(--accent-secondary);
+  color: #ffffff;
+  box-shadow: none;
+  transform: translate(2px, 2px);
+}
+
+.tool-btn:hover:not(.active) {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0px var(--border-color);
+}
+
+.divider-line {
+  width: 2px;
+  height: 28px;
+  background-color: var(--border-color);
+}
+
+/* Color Palette */
+.color-palette-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.group-label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.colors-grid {
+  display: flex;
+  gap: 6px;
+}
+
+.color-dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: var(--brutal-border);
+  border-width: 2px;
+  cursor: pointer;
+  position: relative;
+  transition: transform var(--transition-fast);
+}
+
+.color-dot:hover {
+  transform: scale(1.15);
+}
+
+.color-dot.selected::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 1px solid #000000;
+}
+
+/* Brush Size Selector */
+.brush-size-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sizes-grid {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.size-btn {
+  width: 28px;
+  height: 28px;
+  background: #ffffff;
+  border: var(--brutal-border);
+  border-width: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.size-btn.selected {
+  background: var(--accent-yellow);
+}
+
+.dot-indicator {
+  background-color: var(--text-primary);
+  border-radius: 50%;
+}
+
+.size-btn:hover:not(.selected) {
+  background: var(--bg-primary);
+}
+
+/* Toolbar Action Buttons (Clear/Save) */
+.toolbar-actions {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: var(--brutal-border);
+  border-width: 2px;
+  box-shadow: 2px 2px 0px var(--border-color);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.clear-btn {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.clear-btn:hover {
+  background: #ffe5e5;
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0px var(--border-color);
+}
+
+.download-btn {
+  background: var(--accent-primary);
+  color: #ffffff;
+}
+
+.download-btn:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0px var(--border-color);
+}
+
+.action-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: none;
+}
+
+/* Canvas Wrapper */
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  height: 480px;
+  background-color: #ffffff;
+  overflow: hidden;
+}
+
+.canvas-dot-grid {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(5, 38, 38, 0.05) 1.5px, transparent 1.5px);
+  background-size: 20px 20px;
+  pointer-events: none;
+}
+
+.doodle-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  display: block;
+  z-index: 1;
+}
+
+@media (max-width: 768px) {
+  .canvas-wrapper {
+    height: 350px;
+  }
+  
+  .doodle-toolbar {
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .toolbar-actions {
+    margin-left: 0;
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .divider-line {
+    display: none;
+  }
+}

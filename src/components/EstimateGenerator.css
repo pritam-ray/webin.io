@@ -4,6 +4,30 @@
 
 /* Editor & Dashboard Layout (Web View) */
 .est-wrapper {
+  /* Neo-brutalist overrides for Estimate Generator dashboard */
+  --bg-primary: #f8f6f0;       /* Sand background */
+  --bg-secondary: #ffffff;     /* White card background */
+  --bg-card: #ffffff;
+  --bg-glass: rgba(5, 38, 38, 0.03);
+  --bg-glass-hover: rgba(5, 38, 38, 0.06);
+  --border: #052626;           /* Teal borders */
+  --border-hover: #f25c27;     /* Orange highlight border */
+  --border-strong: #052626;
+  --accent-primary: #f25c27;   /* Orange primary accent */
+  --accent-secondary: #005b5b; /* Teal secondary accent */
+  --accent-tertiary: #f3c63f;  /* Yellow */
+  --accent-gradient: #f25c27;  /* Flat solid orange instead of gradient */
+  --accent-gradient-hover: #d14917;
+  --accent-glow: 3px 3px 0px #052626;
+  --text-primary: #052626;
+  --text-secondary: #4a5c5c;
+  --text-accent: #052626;
+  --text-muted: #7c9090;
+  --radius-sm: 4px;
+  --radius-md: 4px;
+  --radius-lg: 4px;
+  --radius-xl: 4px;
+
   min-height: 100vh;
   background-color: var(--bg-primary);
   color: var(--text-primary);

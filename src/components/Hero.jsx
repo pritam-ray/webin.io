@@ -1,6 +1,5 @@
 import { motion } from 'framer-motion';
 import { ArrowUpRight, ChevronDown } from 'lucide-react';
-import HeroCanvas from './HeroCanvas';
 import './Hero.css';
 
 const Hero = () => {
@@ -14,145 +13,70 @@ const Hero = () => {
 
   return (
     <section className="hero" id="hero">
-      <div className="hero-bg-gradient" />
-      <HeroCanvas />
-
       <div className="hero-content container">
         <motion.div
           className="hero-badge"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
+          initial={{ opacity: 0, y: -20, rotate: -2 }}
+          animate={{ opacity: 1, y: 0, rotate: -2 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
         >
-          <span className="badge-dot" />
-          Available for new projects
+          <span>AVAILABLE FOR NEW PROJECTS</span>
         </motion.div>
 
-        <div className="hero-headline">
-          <div className="hero-line">
-            {'We Don\'t Just Build'.split(' ').map((word, i) => (
-              <motion.span
-                key={i}
-                className="hero-word"
-                initial={{ opacity: 0, y: 80, rotateX: -40 }}
-                animate={{ opacity: 1, y: 0, rotateX: 0 }}
-                transition={{
-                  duration: 0.8,
-                  delay: 0.5 + i * 0.08,
-                  ease: [0.215, 0.61, 0.355, 1],
-                }}
-              >
-                {word}&nbsp;
-              </motion.span>
-            ))}
+        {/* Sticker badge for pricing (from the Instagram image) */}
+        <motion.div
+          className="price-sticker-badge"
+          initial={{ scale: 0, rotate: 0 }}
+          animate={{ scale: 1, rotate: 12 }}
+          transition={{ type: 'spring', stiffness: 200, delay: 0.6 }}
+        >
+          <div className="sticker-content">
+            <span className="sticker-sub">WEBSITES START AT</span>
+            <span className="sticker-price">₹9,999/-</span>
           </div>
-          <div className="hero-line">
-            {'Websites.'.split(' ').map((word, i) => (
-              <motion.span
-                key={i}
-                className="hero-word gradient-word"
-                initial={{ opacity: 0, y: 80, rotateX: -40 }}
-                animate={{ opacity: 1, y: 0, rotateX: 0 }}
-                transition={{
-                  duration: 0.8,
-                  delay: 0.9 + i * 0.08,
-                  ease: [0.215, 0.61, 0.355, 1],
-                }}
-              >
-                {word}&nbsp;
-              </motion.span>
-            ))}
-          </div>
-          <div className="hero-line">
-            {'We Build Digital'.split(' ').map((word, i) => (
-              <motion.span
-                key={i}
-                className="hero-word"
-                initial={{ opacity: 0, y: 80, rotateX: -40 }}
-                animate={{ opacity: 1, y: 0, rotateX: 0 }}
-                transition={{
-                  duration: 0.8,
-                  delay: 1.0 + i * 0.08,
-                  ease: [0.215, 0.61, 0.355, 1],
-                }}
-              >
-                {word}&nbsp;
-              </motion.span>
-            ))}
-          </div>
-          <div className="hero-line">
-            {'Empires.'.split(' ').map((word, i) => (
-              <motion.span
-                key={i}
-                className="hero-word gradient-word"
-                initial={{ opacity: 0, y: 80, rotateX: -40 }}
-                animate={{ opacity: 1, y: 0, rotateX: 0 }}
-                transition={{
-                  duration: 0.8,
-                  delay: 1.25 + i * 0.08,
-                  ease: [0.215, 0.61, 0.355, 1],
-                }}
-              >
-                {word}&nbsp;
-              </motion.span>
-            ))}
-          </div>
-        </div>
+        </motion.div>
+
+        <h1 className="hero-title">
+          <span className="title-block">Don't Just Build</span>
+          <span className="title-block orange-text">a Digital Product</span>
+          <span className="title-block teal-text">— Build It for Growth! —</span>
+        </h1>
 
         <motion.p
           className="hero-subtitle"
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 1.5 }}
+          transition={{ duration: 0.5, delay: 0.8 }}
         >
-          webing.io crafts premium digital experiences that
-          convert visitors into loyal customers. Design that captivates. Code that performs.
+          We design and build high-performance websites, e-commerce solutions, 
+          and custom web applications engineered for business growth. Design that captivates. Code that performs.
         </motion.p>
 
         <motion.div
           className="hero-ctas"
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 1.7 }}
+          transition={{ duration: 0.5, delay: 1.0 }}
         >
-          <motion.button 
-          className="btn-primary" 
-            onClick={scrollToWork}
-            whileTap={{ scale: 0.96 }}
-            whileHover={{ scale: 1.02 }}
-          >
+          <button className="btn-primary" onClick={scrollToWork}>
             <span>View Our Work</span>
-            <ArrowUpRight size={16} />
-          </motion.button>
-          <motion.a
+            <ArrowUpRight size={18} />
+          </button>
+          <a
             href="https://wa.me/919653821027?text=Hi%20webing.io!%20I'd%20like%20to%20start%20a%20project."
             target="_blank"
             rel="noopener noreferrer"
             className="btn-secondary"
-            whileTap={{ scale: 0.96 }}
-            whileHover={{ scale: 1.02 }}
           >
             Start a Project
-          </motion.a>
+          </a>
         </motion.div>
       </div>
 
-      <motion.button
-        className="hero-scroll-indicator"
-        onClick={scrollDown}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 2.2 }}
-        aria-label="Scroll down"
-      >
+      <button className="hero-scroll-indicator" onClick={scrollDown} aria-label="Scroll down">
         <span className="scroll-text">Scroll</span>
-        <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
-        >
-          <ChevronDown size={18} />
-        </motion.div>
-      </motion.button>
+        <ChevronDown size={20} />
+      </button>
     </section>
   );
 };

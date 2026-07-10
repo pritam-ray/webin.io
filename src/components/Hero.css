@@ -5,91 +5,110 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
-}
-
-.hero-bg-gradient {
-  position: absolute;
-  top: -50%;
-  left: -20%;
-  width: 140%;
-  height: 200%;
-  background:
-    radial-gradient(ellipse at 20% 50%, rgba(108, 92, 231, 0.12) 0%, transparent 60%),
-    radial-gradient(ellipse at 80% 20%, rgba(0, 210, 255, 0.08) 0%, transparent 50%),
-    radial-gradient(ellipse at 50% 80%, rgba(168, 85, 247, 0.06) 0%, transparent 40%);
-  pointer-events: none;
-  z-index: 0;
+  padding-top: 100px;
 }
 
 .hero-content {
   position: relative;
   z-index: 2;
   text-align: center;
-  padding-top: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
+/* Sticker badge for project availability */
 .hero-badge {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 20px;
-  background: var(--bg-glass);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-full);
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-  margin-bottom: 40px;
-  backdrop-filter: blur(10px);
-}
-
-.badge-dot {
-  width: 8px;
-  height: 8px;
-  background: #25d366;
-  border-radius: 50%;
-  animation: pulseDot 2s ease-in-out infinite;
-}
-
-@keyframes pulseDot {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.5; transform: scale(1.3); }
-}
-
-.hero-headline {
-  margin-bottom: 28px;
-  perspective: 500px;
-}
-
-.hero-line {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  overflow: hidden;
-}
-
-.hero-word {
-  display: inline-block;
-  font-family: var(--font-heading);
-  font-size: clamp(2.8rem, 7vw, 5.5rem);
+  padding: 6px 14px;
+  background: var(--accent-secondary); /* Deep Teal */
+  color: #ffffff;
+  border: var(--brutal-border);
+  border-width: 2px;
+  box-shadow: var(--brutal-shadow-sm);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
   font-weight: 700;
-  line-height: 1.1;
-  letter-spacing: -0.03em;
-  color: var(--text-primary);
+  margin-bottom: 24px;
 }
 
-.gradient-word {
-  background: var(--accent-gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+/* Circular orange pricing sticker badge (from Instagram image) */
+.price-sticker-badge {
+  position: absolute;
+  top: 15%;
+  right: 5%;
+  width: 140px;
+  height: 140px;
+  background-color: var(--accent-primary); /* Coral Orange */
+  border: var(--brutal-border);
+  border-radius: 50%;
+  box-shadow: var(--brutal-shadow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  transform: rotate(12deg);
+  z-index: 5;
+}
+
+.sticker-content {
+  display: flex;
+  flex-direction: column;
+  color: #ffffff;
+  padding: 10px;
+}
+
+.sticker-sub {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  opacity: 0.95;
+}
+
+.sticker-price {
+  font-family: var(--font-heading);
+  font-size: 1.35rem;
+  font-weight: 900;
+  margin-top: 2px;
+}
+
+/* Slogan typography */
+.hero-title {
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.title-block {
+  display: block;
+  font-family: var(--font-heading);
+  font-weight: 900;
+  color: var(--text-primary);
+  text-transform: uppercase;
+}
+
+.title-block.orange-text {
+  color: var(--accent-primary); /* Coral Orange */
+}
+
+.title-block.teal-text {
+  color: var(--accent-secondary); /* Deep Teal */
+  font-family: var(--font-mono);
+  font-size: clamp(1.4rem, 4vw, 2.8rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
 }
 
 .hero-subtitle {
-  font-size: clamp(1rem, 1.8vw, 1.2rem);
+  font-size: clamp(1rem, 1.8vw, 1.15rem);
   color: var(--text-secondary);
-  max-width: 580px;
-  margin: 0 auto 40px;
-  line-height: 1.7;
+  max-width: 660px;
+  margin: 0 auto 36px;
+  line-height: 1.6;
 }
 
 .hero-ctas {
@@ -102,60 +121,66 @@
 
 .hero-scroll-indicator {
   position: absolute;
-  bottom: 40px;
+  bottom: 30px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   background: none;
   border: none;
   color: var(--text-muted);
-  font-size: 0.75rem;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  font-family: var(--font-body);
-  z-index: 3;
-  transition: color var(--transition-fast);
+  cursor: pointer;
+  transition: all var(--transition-fast);
 }
 
 .hero-scroll-indicator:hover {
-  color: var(--text-secondary);
+  color: var(--text-primary);
+  transform: translate(-50%, 4px);
 }
 
 .scroll-text {
-  writing-mode: vertical-rl;
-  font-size: 0.7rem;
-  letter-spacing: 0.2em;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+@media (max-width: 992px) {
+  .price-sticker-badge {
+    position: relative;
+    top: auto;
+    right: auto;
+    margin-bottom: 24px;
+    width: 120px;
+    height: 120px;
+  }
+  
+  .sticker-price {
+    font-size: 1.15rem;
+  }
 }
 
 @media (max-width: 768px) {
-  .hero-content {
-    padding-top: 100px;
+  .hero {
+    padding-top: 80px;
   }
-
-  .hero-word {
-    font-size: clamp(2rem, 10vw, 3.5rem);
+  
+  .title-block.teal-text {
+    font-size: 1.25rem;
   }
-
-  .hero-subtitle {
-    font-size: 1rem;
-    padding: 0 10px;
-  }
-
+  
   .hero-ctas {
     flex-direction: column;
-  }
-
-  .hero-ctas .btn-primary,
-  .hero-ctas .btn-secondary {
     width: 100%;
-    justify-content: center;
-    max-width: 280px;
   }
-
-  .hero-scroll-indicator {
-    bottom: 20px;
+  
+  .hero-ctas button,
+  .hero-ctas a {
+    width: 100%;
+    max-width: 300px;
+    justify-content: center;
   }
 }

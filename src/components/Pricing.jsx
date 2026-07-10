@@ -75,15 +75,14 @@ const Pricing = () => {
             <motion.div
               key={plan.name}
               className={`pricing-card ${plan.popular ? 'popular' : ''}`}
-              initial={{ opacity: 0, y: 40 }}
+              initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-50px' }}
-              transition={{ duration: 0.5, delay: i * 0.15 }}
-              whileHover={{ y: -8 }}
+              transition={{ duration: 0.4, delay: i * 0.08 }}
             >
               {plan.popular && (
                 <div className="popular-badge">
-                  <Sparkles size={14} />
+                  <Sparkles size={13} />
                   Most Popular
                 </div>
               )}
@@ -103,26 +102,24 @@ const Pricing = () => {
                     className={`pricing-feature ${feature.included ? 'included' : 'excluded'}`}
                   >
                     {feature.included ? (
-                      <Check size={16} className="feature-check" />
+                      <Check size={16} className="feature-check" strokeWidth={3} />
                     ) : (
-                      <X size={16} className="feature-x" />
+                      <X size={16} className="feature-x" strokeWidth={3} />
                     )}
                     <span>{feature.text}</span>
                   </div>
                 ))}
               </div>
 
-              <motion.a
+              <a
                 href={`https://wa.me/919653821027?text=Hi%20webing.io!%20I'm%20interested%20in%20the%20${plan.name}%20plan.`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className={plan.popular ? 'btn-primary pricing-cta' : 'btn-secondary pricing-cta'}
-                whileTap={{ scale: 0.97 }}
-                whileHover={{ scale: 1.02 }}
               >
                 <span>Get Started</span>
                 <ArrowUpRight size={16} />
-              </motion.a>
+              </a>
             </motion.div>
           ))}
         </div>

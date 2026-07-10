@@ -1,5 +1,7 @@
 .portfolio {
   padding: var(--section-padding);
+  background: var(--bg-primary);
+  border-top: var(--brutal-border);
   position: relative;
 }
 
@@ -10,17 +12,17 @@
 }
 
 .project-card {
-  border-radius: var(--radius-xl);
+  background: var(--bg-secondary);
+  border: var(--brutal-border) !important;
+  box-shadow: var(--brutal-shadow);
+  border-radius: 4px !important;
   overflow: hidden;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  transition: all var(--transition-medium);
+  transition: all var(--transition-fast) !important;
 }
 
 .project-card:hover {
-  border-color: var(--border-hover);
-  transform: translateY(-6px);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  transform: translate(-4px, -4px);
+  box-shadow: var(--brutal-shadow-lg);
 }
 
 .project-image {
@@ -31,24 +33,32 @@
   justify-content: center;
   overflow: hidden;
   padding: 30px;
+  border-bottom: var(--brutal-border);
+  background-color: var(--bg-primary);
 }
+
+/* Color code the backgrounds of project mockups */
+.project-card:nth-child(1) .project-image { background-color: #fcefe9; }
+.project-card:nth-child(2) .project-image { background-color: #e9f5f5; }
+.project-card:nth-child(3) .project-image { background-color: #fdfae9; }
+.project-card:nth-child(4) .project-image { background-color: #f3eff9; }
 
 .project-mockup {
   width: 85%;
   max-width: 400px;
-  background: rgba(0, 0, 0, 0.3);
-  border-radius: 10px;
+  background: #ffffff;
+  border: 2px solid var(--border-color);
+  box-shadow: 4px 4px 0px var(--border-color);
+  border-radius: 4px;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
 }
 
 .mockup-browser {
   display: flex;
   align-items: center;
   padding: 8px 12px;
-  background: rgba(0, 0, 0, 0.3);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  background: var(--bg-primary);
+  border-bottom: 2px solid var(--border-color);
   gap: 8px;
 }
 
@@ -61,20 +71,23 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid var(--border-color);
 }
 
-.mockup-dots span:first-child { background: #ff5f57; }
-.mockup-dots span:nth-child(2) { background: #ffbd2e; }
-.mockup-dots span:last-child { background: #28c840; }
+.mockup-dots span:first-child { background: var(--accent-primary); }
+.mockup-dots span:nth-child(2) { background: var(--accent-yellow); }
+.mockup-dots span:last-child { background: var(--accent-secondary); }
 
 .mockup-url {
   flex: 1;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 4px;
-  padding: 3px 10px;
+  background: #ffffff;
+  border: 1.5px solid var(--border-color);
+  border-radius: 2px;
+  padding: 2px 8px;
+  font-family: var(--font-mono);
   font-size: 0.65rem;
-  color: rgba(255, 255, 255, 0.4);
+  font-weight: 700;
+  color: var(--text-secondary);
 }
 
 .mockup-content {
@@ -93,11 +106,11 @@
   object-fit: cover;
   object-position: top;
   display: block;
-  transition: transform 0.5s ease;
+  transition: transform 0.4s ease;
 }
 
 .project-card:hover .mockup-screenshot {
-  transform: scale(1.05);
+  transform: scale(1.03);
 }
 
 .project-overlay-link {
@@ -114,8 +127,9 @@
 .mockup-hero-block {
   width: 100%;
   height: 40px;
-  background: rgba(255, 255, 255, 0.06);
-  border-radius: 6px;
+  background: var(--bg-primary);
+  border: 1.5px solid var(--border-color);
+  border-radius: 4px;
   margin-bottom: 10px;
 }
 
@@ -128,7 +142,8 @@
 
 .mockup-line {
   height: 6px;
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--text-muted);
+  opacity: 0.3;
   border-radius: 3px;
 }
 
@@ -144,7 +159,8 @@
 
 .mockup-block {
   height: 30px;
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--bg-primary);
+  border: 1.5px solid var(--border-color);
   border-radius: 4px;
 }
 
@@ -154,30 +170,38 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(5, 38, 38, 0.4);
   display: flex;
   align-items: center;
   justify-content: center;
-  backdrop-filter: blur(4px);
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.project-card:hover .project-overlay {
+  opacity: 1;
 }
 
 .view-project-text {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: white;
+  color: #ffffff;
+  background: var(--accent-primary);
   font-family: var(--font-heading);
-  font-weight: 600;
-  font-size: 1rem;
-  padding: 12px 24px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: var(--radius-full);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  padding: 10px 20px;
+  border: var(--brutal-border);
+  border-width: 2px;
+  box-shadow: 3px 3px 0px var(--border-color);
   transition: all var(--transition-fast);
 }
 
 .view-project-text:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.5);
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0px var(--border-color);
 }
 
 .project-info {
@@ -188,24 +212,33 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 }
 
 .project-category {
-  font-size: 0.8rem;
-  color: var(--accent-secondary);
-  font-weight: 500;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  background: var(--accent-yellow);
+  padding: 4px 8px;
+  border: var(--brutal-border);
+  border-width: 2px;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  box-shadow: 2px 2px 0px var(--border-color);
 }
 
 .project-year {
-  font-size: 0.8rem;
-  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-secondary);
 }
 
 .project-title {
-  font-size: 1.5rem;
+  font-family: var(--font-heading);
+  font-size: 1.45rem;
+  text-transform: uppercase;
   font-weight: 700;
   margin-bottom: 8px;
   color: var(--text-primary);
@@ -214,7 +247,7 @@
 .project-description {
   font-size: 0.95rem;
   color: var(--text-secondary);
-  line-height: 1.6;
+  line-height: 1.5;
 }
 
 .portfolio-cta {
@@ -241,18 +274,18 @@
     -webkit-overflow-scrolling: touch;
     gap: 16px;
     padding: 12px 4px 32px;
-    scrollbar-width: none; /* Firefox */
+    scrollbar-width: none;
   }
 
   .portfolio-carousel::-webkit-scrollbar {
-    display: none; /* Chrome/Safari */
+    display: none;
   }
 
   .portfolio-carousel .project-card {
     scroll-snap-align: center;
     flex: 0 0 85%;
     max-width: 380px;
-    transform: none !important; /* Prevent hover overrides */
+    transform: none !important;
   }
 
   .project-image {
@@ -270,18 +303,19 @@
   }
 
   .carousel-dot {
-    width: 8px;
-    height: 8px;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
-    background: var(--border);
-    transition: all var(--transition-medium);
+    border: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+    transition: all var(--transition-fast);
   }
 
   .carousel-dot.active {
     background: var(--accent-primary);
     width: 24px;
-    border-radius: var(--radius-full);
-    box-shadow: var(--accent-glow);
+    border-radius: 4px;
+    box-shadow: 2px 2px 0px var(--border-color);
   }
 }
 

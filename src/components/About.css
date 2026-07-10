@@ -1,31 +1,9 @@
 .about {
   padding: var(--section-padding);
+  background: var(--bg-primary);
+  border-top: var(--brutal-border);
   position: relative;
   overflow: hidden;
-}
-
-.about-glow-orb {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(120px);
-  pointer-events: none;
-  opacity: 0.5;
-}
-
-.about-orb-1 {
-  width: 400px;
-  height: 400px;
-  background: rgba(108, 92, 231, 0.1);
-  top: 10%;
-  right: -10%;
-}
-
-.about-orb-2 {
-  width: 300px;
-  height: 300px;
-  background: rgba(0, 210, 255, 0.08);
-  bottom: 10%;
-  left: -5%;
 }
 
 .about-grid {
@@ -36,7 +14,9 @@
 }
 
 .about-story h3 {
-  font-size: 1.5rem;
+  font-family: var(--font-heading);
+  font-size: 1.8rem;
+  text-transform: uppercase;
   margin-bottom: 20px;
   color: var(--text-primary);
 }
@@ -45,62 +25,63 @@
   font-size: 1.05rem;
   margin-bottom: 20px;
   color: var(--text-secondary);
-  line-height: 1.8;
+  line-height: 1.6;
 }
 
 .about-philosophy {
   margin-top: 32px;
   display: flex;
   gap: 20px;
+  background: var(--bg-secondary);
+  border: var(--brutal-border);
+  border-width: 2px;
+  padding: 20px;
+  box-shadow: var(--brutal-shadow-sm);
+  transform: rotate(-1deg);
 }
 
 .philosophy-line {
-  width: 3px;
+  width: 4px;
   min-height: 100%;
-  background: var(--accent-gradient);
-  border-radius: 2px;
+  background: var(--accent-primary); /* Coral Orange */
   flex-shrink: 0;
 }
 
 .about-philosophy blockquote {
-  font-family: var(--font-heading);
-  font-size: 1.15rem;
-  color: var(--text-accent);
-  font-style: italic;
-  line-height: 1.6;
-  font-weight: 500;
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  color: var(--text-primary);
+  line-height: 1.5;
+  font-weight: 700;
 }
 
 .about-stats-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  gap: 24px;
 }
 
 .stat-card {
   padding: 32px 24px;
-  border-radius: var(--radius-lg);
   text-align: center;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  transition: all var(--transition-medium);
 }
 
 .stat-number {
   font-family: var(--font-heading);
-  font-size: 2.5rem;
-  font-weight: 700;
-  background: var(--accent-gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  font-size: 3rem;
+  font-weight: 900;
+  color: var(--accent-primary);
 }
 
 .stat-label {
-  font-size: 0.9rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
   color: var(--text-secondary);
-  font-weight: 400;
 }
 
 @media (max-width: 900px) {
@@ -108,12 +89,16 @@
     grid-template-columns: 1fr;
     gap: 40px;
   }
+  
+  .about-philosophy {
+    transform: none;
+  }
 }
 
 @media (max-width: 480px) {
   .about-stats-grid {
     grid-template-columns: 1fr 1fr;
-    gap: 12px;
+    gap: 16px;
   }
 
   .stat-card {
@@ -121,6 +106,6 @@
   }
 
   .stat-number {
-    font-size: 2rem;
+    font-size: 2.2rem;
   }
 }
