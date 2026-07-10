@@ -388,50 +388,116 @@
   margin-bottom: 32px;
 }
 
-/* Mobile Layout styles */
-.portfolio-grid-mobile {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  margin-top: 36px;
-}
-
 @media (max-width: 900px) {
   .portfolio-scroll-container {
-    display: none;
+    height: 260vh;
   }
 
-  .portfolio-grid {
-    grid-template-columns: 1fr;
+  .portfolio-horizontal-track {
     gap: 24px;
-  }
-}
-
-@media (max-width: 480px) {
-  .portfolio-grid-mobile {
-    gap: 20px;
-    margin-top: 28px;
+    padding: 0 20px;
   }
 
-  .project-image {
+  .portfolio-title-card {
+    width: 320px;
+    height: 420px;
+    padding: 32px 24px;
+  }
+
+  .portfolio-track-title {
+    font-size: 1.6rem;
+  }
+
+  .portfolio-track-subtitle {
+    font-size: 0.85rem;
+  }
+
+  .portfolio-horizontal-track .project-card {
+    width: 340px;
+    height: 420px;
+  }
+
+  .portfolio-horizontal-track .project-image {
     height: 200px;
     padding: 20px;
   }
 
   .project-info {
-    padding: 20px 16px;
+    padding: 20px;
   }
 
   .project-title {
-    font-size: 1.1rem;
+    font-size: 1.25rem;
   }
 
   .project-description {
     font-size: 0.85rem;
   }
 
-  .project-tech span {
-    font-size: 0.6rem;
-    padding: 3px 8px;
+  .portfolio-cta-card {
+    width: 320px;
+    height: 420px;
+    padding: 32px 24px;
+  }
+
+  .cta-card-title {
+    font-size: 1.4rem;
+  }
+
+  .cta-card-desc {
+    font-size: 0.85rem;
+    margin-bottom: 24px;
   }
 }
+
+@media (max-width: 480px) {
+  .portfolio-scroll-container {
+    height: 230vh;
+  }
+
+  .portfolio-horizontal-track {
+    gap: 16px;
+    padding: 0 15px;
+  }
+
+  .portfolio-title-card {
+    width: 280px;
+    height: 380px;
+    padding: 24px 16px;
+  }
+
+  .portfolio-track-title {
+    font-size: 1.4rem;
+    margin-bottom: 12px;
+  }
+
+  .portfolio-horizontal-track .project-card {
+    width: 290px;
+    height: 380px;
+  }
+
+  .portfolio-horizontal-track .project-image {
+    height: 180px;
+    padding: 15px;
+  }
+
+  .project-info {
+    padding: 16px;
+  }
+
+  .project-title {
+    font-size: 1.15rem;
+  }
+
+  .portfolio-cta-card {
+    width: 280px;
+    height: 380px;
+    padding: 24px 16px;
+  }
+
+  .cta-card-title {
+    font-size: 1.25rem;
+  }
+}
+
+

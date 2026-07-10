@@ -300,7 +300,7 @@
   }
 
   .navbar-cta {
-    display: none;
+    display: none !important;
   }
 
   .navbar-hamburger {

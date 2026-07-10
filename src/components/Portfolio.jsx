@@ -104,15 +104,6 @@ const ProjectCard = ({ project, index }) => {
 
 const Portfolio = () => {
   const targetRef = useRef(null);
-  const [isDesktop, setIsDesktop] = useState(window.innerWidth > 900);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsDesktop(window.innerWidth > 900);
-    };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
   const { scrollYProgress } = useScroll({
     target: targetRef,
@@ -122,77 +113,44 @@ const Portfolio = () => {
   // Translate goes from 0% to -75% of the total track width
   const x = useTransform(scrollYProgress, [0, 1], ['0%', '-76%']);
 
-  if (isDesktop) {
-    return (
-      <section ref={targetRef} className="portfolio-scroll-container" id="portfolio">
-        <div className="portfolio-sticky-wrapper">
-          <motion.div style={{ x }} className="portfolio-horizontal-track">
-            {/* Title Card inside horizontal scrolling track */}
-            <div className="portfolio-title-card glass">
-              <span className="portfolio-track-badge">SELECTED WORK</span>
-              <h2 className="portfolio-track-title">Projects We're Proud Of</h2>
-              <p className="portfolio-track-subtitle">
-                Every project is a story of collaboration, creativity, and meticulous craft. 
-                Here's a glimpse of what we've built.
-              </p>
-              <div className="scroll-hint-arrow">
-                <span>SCROLL DOWN TO SLIDE SIDEWAYS &rarr;</span>
-              </div>
-            </div>
-
-            {projects.map((project, i) => (
-              <ProjectCard key={project.title} project={project} index={i} />
-            ))}
-
-            {/* CTA Card at the end of track */}
-            <div className="portfolio-cta-card glass">
-              <h3 className="cta-card-title">WANT SOMETHING SIMILAR?</h3>
-              <p className="cta-card-desc">
-                Let's discuss how we can build a high-performance web platform customized for your business growth.
-              </p>
-              <a
-                href="https://wa.me/919653821027?text=Hi!%20I'd%20like%20to%20discuss%20a%20project%20similar%20to%20your%20portfolio%20work."
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-primary"
-              >
-                <span>LET'S TALK</span>
-                <ArrowUpRight size={18} />
-              </a>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-    );
-  }
-
-  // Mobile View
   return (
-    <section className="portfolio" id="portfolio">
-      <div className="container">
-        <SectionHeading
-          label="Selected Work"
-          title="Projects We're Proud Of"
-          subtitle="Every project is a story of collaboration, creativity, and meticulous craft. Here's a glimpse of what we've built."
-        />
+    <section ref={targetRef} className="portfolio-scroll-container" id="portfolio">
+      <div className="portfolio-sticky-wrapper">
+        <motion.div style={{ x }} className="portfolio-horizontal-track">
+          {/* Title Card inside horizontal scrolling track */}
+          <div className="portfolio-title-card glass">
+            <span className="portfolio-track-badge">SELECTED WORK</span>
+            <h2 className="portfolio-track-title">Projects We're Proud Of</h2>
+            <p className="portfolio-track-subtitle">
+              Every project is a story of collaboration, creativity, and meticulous craft. 
+              Here's a glimpse of what we've built.
+            </p>
+            <div className="scroll-hint-arrow">
+              <span>SCROLL DOWN TO SLIDE SIDEWAYS &rarr;</span>
+            </div>
+          </div>
 
-        <div className="portfolio-grid-mobile">
           {projects.map((project, i) => (
             <ProjectCard key={project.title} project={project} index={i} />
           ))}
-        </div>
 
-        <div className="portfolio-cta">
-          <a
-            href="https://wa.me/919653821027?text=Hi!%20I'd%20like%20to%20discuss%20a%20project%20similar%20to%20your%20portfolio%20work."
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-secondary"
-          >
-            Want Something Similar? Let's Talk
-            <ArrowUpRight size={16} />
-          </a>
-        </div>
+          {/* CTA Card at the end of track */}
+          <div className="portfolio-cta-card glass">
+            <h3 className="cta-card-title">WANT SOMETHING SIMILAR?</h3>
+            <p className="cta-card-desc">
+              Let's discuss how we can build a high-performance web platform customized for your business growth.
+            </p>
+            <a
+              href="https://wa.me/919653821027?text=Hi!%20I'd%20like%20to%20discuss%20a%20project%20similar%20to%20your%20portfolio%20work."
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-primary"
+            >
+              <span>LET'S TALK</span>
+              <ArrowUpRight size={18} />
+            </a>
+          </div>
+        </motion.div>
       </div>
     </section>
   );
