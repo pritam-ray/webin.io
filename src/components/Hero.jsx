@@ -13,6 +13,19 @@ const Hero = () => {
 
   return (
     <section className="hero" id="hero">
+      {/* Sticker badge for pricing (from the Instagram image) */}
+      <motion.div
+        className="price-sticker-badge"
+        initial={{ scale: 0, rotate: 0 }}
+        animate={{ scale: 1, rotate: 12 }}
+        transition={{ type: 'spring', stiffness: 200, delay: 0.6 }}
+      >
+        <div className="sticker-content">
+          <span className="sticker-sub">WEBSITES START AT</span>
+          <span className="sticker-price">₹9,999/-</span>
+        </div>
+      </motion.div>
+
       <div className="hero-content container">
         <motion.div
           className="hero-badge"
@@ -21,19 +34,6 @@ const Hero = () => {
           transition={{ duration: 0.5, delay: 0.2 }}
         >
           <span>AVAILABLE FOR NEW PROJECTS</span>
-        </motion.div>
-
-        {/* Sticker badge for pricing (from the Instagram image) */}
-        <motion.div
-          className="price-sticker-badge"
-          initial={{ scale: 0, rotate: 0 }}
-          animate={{ scale: 1, rotate: 12 }}
-          transition={{ type: 'spring', stiffness: 200, delay: 0.6 }}
-        >
-          <div className="sticker-content">
-            <span className="sticker-sub">WEBSITES START AT</span>
-            <span className="sticker-price">₹9,999/-</span>
-          </div>
         </motion.div>
 
         <h1 className="hero-title">

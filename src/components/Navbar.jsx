@@ -70,18 +70,18 @@ const Navbar = () => {
             <svg viewBox="0 0 100 100" className="logo-svg" width="28" height="28" style={{ marginRight: '8px', overflow: 'visible' }}>
               <defs>
                 <linearGradient id="nav-logo-grad-1" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#6c5ce7" />
-                  <stop offset="100%" stopColor="#a855f7" />
+                  <stop offset="0%" stopColor="#052626" />
+                  <stop offset="100%" stopColor="#021111" />
                 </linearGradient>
                 <linearGradient id="nav-logo-grad-2" x1="0%" y1="100%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor="#00d2ff" />
-                  <stop offset="100%" stopColor="#0066ff" />
+                  <stop offset="0%" stopColor="#ffffff" />
+                  <stop offset="100%" stopColor="#9ca5a5" />
                 </linearGradient>
                 <filter id="nav-logo-shadow" x="-20%" y="-20%" width="140%" height="140%">
                   <feDropShadow dx="-1" dy="2" stdDeviation="1.5" floodColor="#000" floodOpacity="0.4" />
                 </filter>
               </defs>
-              <circle cx="24" cy="26" r="6" fill="#00d2ff" />
+              <circle cx="24" cy="26" r="6" fill="#052626" />
               <path d="M 25 38 L 38 62" stroke="url(#nav-logo-grad-2)" strokeWidth="11" strokeLinecap="round" />
               <path d="M 38 62 L 52 26" stroke="url(#nav-logo-grad-1)" strokeWidth="11" strokeLinecap="round" filter="url(#nav-logo-shadow)" />
               <path d="M 52 26 L 66 62" stroke="url(#nav-logo-grad-2)" strokeWidth="11" strokeLinecap="round" />

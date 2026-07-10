@@ -1,12 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
   <defs>
     <linearGradient id="logo-grad-1" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#6c5ce7" />
-      <stop offset="100%" stop-color="#a855f7" />
+      <stop offset="0%" stop-color="#052626" />
+      <stop offset="100%" stop-color="#021111" />
     </linearGradient>
     <linearGradient id="logo-grad-2" x1="0%" y1="100%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#00d2ff" />
-      <stop offset="100%" stop-color="#0066ff" />
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#9ca5a5" />
     </linearGradient>
     <filter id="logo-shadow" x="-20%" y="-20%" width="140%" height="140%">
       <feDropShadow dx="-1" dy="2" stdDeviation="1.5" flood-color="#000" flood-opacity="0.4" />
@@ -14,7 +14,7 @@
   </defs>
   
   <!-- Dot (the 'i' dot) -->
-  <circle cx="24" cy="26" r="6" fill="#00d2ff" />
+  <circle cx="24" cy="26" r="6" fill="#052626" />
   
   <!-- Left Stem (separate) -->
   <path d="M 25 38 L 38 62" stroke="url(#logo-grad-2)" stroke-width="11" stroke-linecap="round" />

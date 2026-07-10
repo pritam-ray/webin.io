@@ -132,7 +132,7 @@ const DoodleCanvas = () => {
       <div className="container">
         <div className="doodle-header">
           <span className="doodle-badge">INTERACTIVE</span>
-          <h2 className="doodle-title">WTF IS WRITTEN HERE?</h2>
+          <h2 className="doodle-title">WHAT IS WRITTEN HERE?</h2>
           <p className="doodle-subtitle">
             Pick a tool, draw your ideas, sketch a wireframe, or simply sign your name. 
             The canvas belongs to you.

@@ -36,7 +36,7 @@
 /* Circular orange pricing sticker badge (from Instagram image) */
 .price-sticker-badge {
   position: absolute;
-  top: 15%;
+  top: 140px;
   right: 5%;
   width: 140px;
   height: 140px;
@@ -148,12 +148,12 @@
   letter-spacing: 0.1em;
 }
 
-@media (max-width: 992px) {
+@media (max-width: 1300px) {
   .price-sticker-badge {
     position: relative;
     top: auto;
     right: auto;
-    margin-bottom: 24px;
+    margin: 0 auto 24px;
     width: 120px;
     height: 120px;
   }
