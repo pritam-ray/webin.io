@@ -23,7 +23,7 @@ function App() {
   }
 
   return (
-    <>
+    <div className="app-wrapper">
       <CustomCursor />
       <div className="grain-overlay" />
       <Navbar />
@@ -41,7 +41,7 @@ function App() {
       </main>
       <Footer />
       <WhatsAppButton />
-    </>
+    </div>
   );
 }
 

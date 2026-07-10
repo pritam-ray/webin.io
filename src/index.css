@@ -70,8 +70,13 @@ body {
   background-size: 24px 24px;
   color: var(--text-primary);
   line-height: 1.6;
-  overflow-x: hidden;
   cursor: none;
+}
+
+.app-wrapper {
+  overflow-x: hidden;
+  width: 100%;
+  position: relative;
 }
 
 /* Typography Scale */
@@ -265,11 +270,6 @@ ul {
 
   a, button {
     cursor: auto;
-  }
-
-  /* Prevent horizontal overflow on mobile */
-  html, body {
-    overflow-x: hidden;
   }
 }
 
