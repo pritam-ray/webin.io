@@ -104,6 +104,7 @@ const ProjectCard = ({ project, index }) => {
 
 const Portfolio = () => {
   const targetRef = useRef(null);
+  const trackRef = useRef(null);
 
   const { scrollYProgress } = useScroll({
     target: targetRef,
@@ -113,10 +114,62 @@ const Portfolio = () => {
   // Translate goes from 0% to -75% of the total track width
   const x = useTransform(scrollYProgress, [0, 1], ['0%', '-76%']);
 
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+
+    let startX = 0;
+    let startY = 0;
+    let isHorizontalSwipe = false;
+
+    const handleTouchStart = (e) => {
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      isHorizontalSwipe = false;
+    };
+
+    const handleTouchMove = (e) => {
+      if (e.touches.length !== 1) return;
+
+      const currentX = e.touches[0].clientX;
+      const currentY = e.touches[0].clientY;
+
+      const deltaX = startX - currentX;
+      const deltaY = startY - currentY;
+
+      // Identify horizontal swipe vs vertical page scroll
+      if (!isHorizontalSwipe && Math.abs(deltaX) > 5 && Math.abs(deltaX) > Math.abs(deltaY)) {
+        isHorizontalSwipe = true;
+      }
+
+      if (isHorizontalSwipe) {
+        if (e.cancelable) {
+          e.preventDefault();
+        }
+        // Scroll the window vertically in response to horizontal touch drag
+        window.scrollBy({
+          top: deltaX * 1.3,
+          behavior: 'auto'
+        });
+
+        startX = currentX;
+        startY = currentY;
+      }
+    };
+
+    track.addEventListener('touchstart', handleTouchStart, { passive: true });
+    track.addEventListener('touchmove', handleTouchMove, { passive: false });
+
+    return () => {
+      track.removeEventListener('touchstart', handleTouchStart);
+      track.removeEventListener('touchmove', handleTouchMove);
+    };
+  }, []);
+
   return (
     <section ref={targetRef} className="portfolio-scroll-container" id="portfolio">
       <div className="portfolio-sticky-wrapper">
-        <motion.div style={{ x }} className="portfolio-horizontal-track">
+        <motion.div ref={trackRef} style={{ x }} className="portfolio-horizontal-track">
           {/* Title Card inside horizontal scrolling track */}
           <div className="portfolio-title-card glass">
             <span className="portfolio-track-badge">SELECTED WORK</span>
