@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Palette, Code, ShoppingCart, Layers, RefreshCw, Headphones } from 'lucide-react';
+import { Palette, Code, ShoppingCart, Layers, Cpu, Headphones } from 'lucide-react';
 import SectionHeading from './SectionHeading';
 import './Services.css';
 
@@ -11,8 +11,8 @@ const services = [
   },
   {
     icon: Code,
-    title: 'Web Development',
-    description: 'Fast, responsive, and SEO-optimized websites built with modern tech stacks. Clean code that scales with your business growth.',
+    title: 'Web Apps & Custom Software',
+    description: 'Scalable, high-performance web applications and internal tools (CRMs, dashboards, custom portals) engineered to optimize your business workflow.',
   },
   {
     icon: ShoppingCart,
@@ -20,14 +20,14 @@ const services = [
     description: 'Online stores that don\'t just display products — they sell. Seamless checkout flows, payment integration, and inventory management.',
   },
   {
-    icon: Layers,
-    title: 'UI/UX Design',
-    description: 'User interfaces that feel intuitive from the first click. Research-driven design that prioritizes user delight and conversion.',
+    icon: Cpu,
+    title: 'AI & Automation',
+    description: 'Supercharge operations with custom LLM pipelines, intelligent WhatsApp chatbots to qualify leads, and workflow automations (Make/Zapier).',
   },
   {
-    icon: RefreshCw,
-    title: 'Website Redesign',
-    description: 'Transform your outdated website into a modern masterpiece. We breathe new life into existing platforms while preserving your brand\'s soul.',
+    icon: Layers,
+    title: 'UI/UX Design',
+    description: 'User interfaces that feel intuitive from the first click. Research-driven design that prioritizes user delight and conversions.',
   },
   {
     icon: Headphones,
