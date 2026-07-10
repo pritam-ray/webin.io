@@ -175,9 +175,9 @@ const Navbar = () => {
 
                 <div className="mobile-contact-section">
                   <div className="mobile-contact-title">SAY HELLO</div>
-                  <a href="mailto:hello@webing.io" className="mobile-contact-item">
+                  <a href="mailto:itswebing.io@gmail.com" className="mobile-contact-item">
                     <Mail size={16} />
-                    <span>hello@webing.io</span>
+                    <span>itswebing.io@gmail.com</span>
                   </a>
                   <a href="tel:+919653821027" className="mobile-contact-item">
                     <Phone size={16} />

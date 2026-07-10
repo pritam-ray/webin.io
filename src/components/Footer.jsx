@@ -17,7 +17,7 @@ const footerLinks = {
   'Contact': [
     { name: 'WhatsApp', href: 'https://wa.me/919653821027', external: true },
     { name: 'Call Us', href: 'tel:+919653821027', external: true },
-    { name: 'Email', href: 'mailto:hello@webing.io', external: true },
+    { name: 'Email', href: 'mailto:itswebing.io@gmail.com', external: true },
   ],
 };
 
