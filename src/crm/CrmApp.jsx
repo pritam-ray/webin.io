@@ -44,38 +44,38 @@ function CrmShell() {
       return <SheetManager />;
     }
 
-    // Role-specific page rendering
+    // Role-specific page rendering — pass activePage so dashboards open the correct tab
     if (roles.includes(ROLES.ADMIN)) {
-      if (['overview', 'team', 'all-leads'].includes(activePage)) {
-        return <AdminDashboard />;
+      if (['overview', 'team', 'all-leads', 'audit'].includes(activePage)) {
+        return <AdminDashboard initialTab={activePage} />;
       }
     }
 
     if (roles.includes(ROLES.LEAD_ASSIGNER)) {
       if (['upload', 'assign'].includes(activePage)) {
-        return <AssignerDashboard />;
+        return <AssignerDashboard initialTab={activePage} />;
       }
     }
 
     if (roles.includes(ROLES.SALES)) {
       if (activePage === 'my-leads') {
-        return <SalesDashboard />;
+        return <SalesDashboard initialTab={activePage} />;
       }
     }
 
     if (roles.includes(ROLES.TECHNICAL)) {
       if (['incoming', 'tech-leads'].includes(activePage)) {
-        return <TechDashboard />;
+        return <TechDashboard initialTab={activePage} />;
       }
     }
 
     // Fallback/Default dashboard based on highest privilege role
-    if (roles.includes(ROLES.ADMIN)) return <AdminDashboard />;
-    if (roles.includes(ROLES.LEAD_ASSIGNER)) return <AssignerDashboard />;
-    if (roles.includes(ROLES.SALES)) return <SalesDashboard />;
-    if (roles.includes(ROLES.TECHNICAL)) return <TechDashboard />;
+    if (roles.includes(ROLES.ADMIN)) return <AdminDashboard initialTab="overview" />;
+    if (roles.includes(ROLES.LEAD_ASSIGNER)) return <AssignerDashboard initialTab="overview" />;
+    if (roles.includes(ROLES.SALES)) return <SalesDashboard initialTab="overview" />;
+    if (roles.includes(ROLES.TECHNICAL)) return <TechDashboard initialTab="overview" />;
     
-    return <AdminDashboard />;
+    return <AdminDashboard initialTab="overview" />;
   };
 
   return (

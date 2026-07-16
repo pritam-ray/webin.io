@@ -1,14 +1,19 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useCrm } from '../context/CrmContext';
 import { Inbox, Trophy, XCircle, Package } from 'lucide-react';
 import StatsCard from '../components/StatsCard';
 import LeadTable from '../components/LeadTable';
 import LeadDetailModal from '../components/LeadDetailModal';
 
-export default function TechDashboard() {
+export default function TechDashboard({ initialTab = 'overview' }) {
   const { leads, users, currentUser, updateLeadStatus } = useCrm();
-  const [tab, setTab] = useState('overview');
+  const [tab, setTab] = useState(initialTab);
   const [selectedLead, setSelectedLead] = useState(null);
+
+  // Sync tab when sidebar navigation changes
+  useEffect(() => {
+    setTab(initialTab);
+  }, [initialTab]);
 
   const myLeads = leads.filter(l => l.assigned_to === currentUser?.id);
   const incoming = myLeads.filter(l => ['in-review', 'converted'].includes(l.status));

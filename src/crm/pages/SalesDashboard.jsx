@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useCrm } from '../context/CrmContext';
 import { Phone, TrendingUp, Trophy, Send } from 'lucide-react';
 import StatsCard from '../components/StatsCard';
@@ -6,11 +6,16 @@ import LeadTable from '../components/LeadTable';
 import LeadDetailModal from '../components/LeadDetailModal';
 import ForwardModal from '../components/ForwardModal';
 
-export default function SalesDashboard() {
+export default function SalesDashboard({ initialTab = 'overview' }) {
   const { leads, users, currentUser, updateLeadStatus } = useCrm();
-  const [tab, setTab] = useState('overview');
+  const [tab, setTab] = useState(initialTab);
   const [selectedLead, setSelectedLead] = useState(null);
   const [forwardLeadId, setForwardLeadId] = useState(null);
+
+  // Sync tab when sidebar navigation changes
+  useEffect(() => {
+    setTab(initialTab);
+  }, [initialTab]);
 
   const myLeads = leads.filter(l => l.assigned_to === currentUser?.id);
   const active = myLeads.filter(l => !['closed-won', 'closed-lost'].includes(l.status));

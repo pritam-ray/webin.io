@@ -1,6 +1,6 @@
 import { useCrm } from '../context/CrmContext';
 import { ROLE_LABELS, ROLE_COLORS, ROLES } from '../utils/constants';
-import { Users, Upload, Phone, Settings, BarChart3, FileText, UserCheck, LogOut, Inbox, FileSpreadsheet } from 'lucide-react';
+import { Users, Upload, Phone, BarChart3, FileText, UserCheck, LogOut, Inbox, FileSpreadsheet, ClipboardList } from 'lucide-react';
 
 export default function Sidebar({ activePage, onNavigate, isOpen, onClose }) {
   const { currentUser, logout, leads, sheets } = useCrm();
@@ -30,15 +30,15 @@ export default function Sidebar({ activePage, onNavigate, isOpen, onClose }) {
     if (roles.includes(ROLES.ADMIN)) {
       addItem({ section: 'Management' });
       addItem({ id: 'team', label: 'Team Members', icon: Users });
-      addItem({ id: 'all-leads', label: 'All Leads', icon: FileText, badge: leads.length });
+      addItem({ id: 'all-leads', label: 'All Leads', icon: FileText, badge: leads.length || null });
+      addItem({ id: 'audit', label: 'Audit Log', icon: ClipboardList });
     }
 
     if (roles.includes(ROLES.LEAD_ASSIGNER)) {
-      const unassigned = leads.filter(l => l.status === 'new').length;
       addItem({ section: 'Leads' });
       addItem({ id: 'upload', label: 'Upload Leads', icon: Upload });
+      const unassigned = leads.filter(l => l.status === 'new').length;
       addItem({ id: 'assign', label: 'Assign Leads', icon: UserCheck, badge: unassigned || null });
-      addItem({ id: 'all-leads', label: 'All Leads', icon: FileText });
     }
 
     if (roles.includes(ROLES.SALES)) {
@@ -52,10 +52,8 @@ export default function Sidebar({ activePage, onNavigate, isOpen, onClose }) {
         l.assigned_to === currentUser?.id &&
         ['in-review', 'converted'].includes(l.status)
       ).length;
-      const myTechLeads = leads.filter(l => l.assigned_to === currentUser?.id).length;
       addItem({ section: 'My Work' });
       addItem({ id: 'incoming', label: 'Incoming Leads', icon: Inbox, badge: incoming || null });
-      addItem({ id: 'tech-leads', label: 'All My Tech Leads', icon: FileText, badge: myTechLeads || null });
     }
 
     // Shared across all roles

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useCrm } from '../context/CrmContext';
 import { FileText, Upload, UserCheck, Plus } from 'lucide-react';
 import StatsCard from '../components/StatsCard';
@@ -8,13 +8,18 @@ import AddLeadModal from '../components/AddLeadModal';
 import AssignModal from '../components/AssignModal';
 import LeadDetailModal from '../components/LeadDetailModal';
 
-export default function AssignerDashboard() {
+export default function AssignerDashboard({ initialTab = 'overview' }) {
   const { leads, users, getStats } = useCrm();
-  const [tab, setTab] = useState('overview');
+  const [tab, setTab] = useState(initialTab);
   const [showAddLead, setShowAddLead] = useState(false);
   const [showAssign, setShowAssign] = useState(false);
   const [selectedIds, setSelectedIds] = useState([]);
   const [selectedLead, setSelectedLead] = useState(null);
+
+  // Sync tab when sidebar navigation changes
+  useEffect(() => {
+    setTab(initialTab);
+  }, [initialTab]);
 
   const stats = getStats();
   const unassignedLeads = leads.filter(l => l.status === 'new');

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useCrm } from '../context/CrmContext';
 import { ROLE_COLORS, ROLE_LABELS } from '../utils/constants';
 import { Users, UserPlus, FileText, TrendingUp, Trophy, XCircle, Edit, Trash2, Clock, Search } from 'lucide-react';
@@ -7,9 +7,9 @@ import LeadTable from '../components/LeadTable';
 import TeamMemberModal from '../components/TeamMemberModal';
 import LeadDetailModal from '../components/LeadDetailModal';
 
-export default function AdminDashboard() {
+export default function AdminDashboard({ initialTab = 'overview' }) {
   const { users, leads, deleteUser, getStats, fetchGlobalActivity } = useCrm();
-  const [tab, setTab] = useState('overview');
+  const [tab, setTab] = useState(initialTab);
   const [showAddMember, setShowAddMember] = useState(false);
   const [editMember, setEditMember] = useState(null);
   const [selectedLead, setSelectedLead] = useState(null);
@@ -20,6 +20,11 @@ export default function AdminDashboard() {
   const [logSearch, setLogSearch] = useState('');
 
   const stats = getStats();
+
+  // Sync tab when sidebar navigation changes
+  useEffect(() => {
+    handleTabChange(initialTab);
+  }, [initialTab]);
 
   const handleTabChange = async (newTab) => {
     setTab(newTab);
