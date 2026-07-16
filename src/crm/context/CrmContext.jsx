@@ -71,8 +71,12 @@ export function CrmProvider({ children }) {
       if (currentUser) {
         const refreshedMe = normalized.find(u => u.email.toLowerCase() === currentUser.email.toLowerCase());
         if (refreshedMe) {
-          setCurrentUser(refreshedMe);
-          localStorage.setItem('crm_session', JSON.stringify(refreshedMe));
+          const currentStr = JSON.stringify(currentUser);
+          const refreshedStr = JSON.stringify(refreshedMe);
+          if (currentStr !== refreshedStr) {
+            setCurrentUser(refreshedMe);
+            localStorage.setItem('crm_session', refreshedStr);
+          }
         }
       }
     }
