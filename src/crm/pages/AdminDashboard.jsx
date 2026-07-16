@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useCrm } from '../context/CrmContext';
 import { ROLE_COLORS, ROLE_LABELS } from '../utils/constants';
-import { Users, UserPlus, FileText, TrendingUp, Trophy, XCircle, Edit, Trash2, Clock, Search } from 'lucide-react';
+import { Users, UserPlus, FileText, TrendingUp, Trophy, XCircle, Edit, Trash2, Clock, Search, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
 import StatsCard from '../components/StatsCard';
 import LeadTable from '../components/LeadTable';
 import TeamMemberModal from '../components/TeamMemberModal';
@@ -18,6 +18,13 @@ export default function AdminDashboard({ initialTab = 'overview' }) {
   const [logs, setLogs] = useState([]);
   const [loadingLogs, setLoadingLogs] = useState(false);
   const [logSearch, setLogSearch] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(50);
+
+  // Reset page to 1 when search changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [logSearch]);
 
   const stats = getStats();
 
@@ -178,33 +185,130 @@ export default function AdminDashboard({ initialTab = 'overview' }) {
               <h3>No activity logs found</h3>
               <p>System activities will be listed here as they occur</p>
             </div>
-          ) : (
-            <div className="crm-activity-log" style={{ background: 'var(--crm-bg-card)', border: '1px solid var(--crm-border)', borderRadius: 'var(--crm-radius)', padding: 24, maxHeight: 'calc(100vh - 280px)', overflowY: 'auto' }}>
-              {logs
-                .filter(log => {
-                  const q = logSearch.toLowerCase();
-                  return (
-                    log.user_name?.toLowerCase().includes(q) ||
-                    log.action?.toLowerCase().includes(q) ||
-                    log.details?.toLowerCase().includes(q)
-                  );
-                })
-                .map(log => (
-                  <div key={log.id} className="crm-activity-item" style={{ marginBottom: 20 }}>
-                    <div className="crm-activity-dot" style={{ background: 'var(--crm-accent)' }} />
-                    <div className="crm-activity-content">
-                      <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--crm-text)' }}>
-                        <span style={{ fontWeight: 700, color: 'var(--crm-accent)', marginRight: 6 }}>{log.action}</span>
-                        — {log.details}
-                      </p>
-                      <time style={{ display: 'block', fontSize: '0.75rem', color: 'var(--crm-text-secondary)', marginTop: 4 }}>
-                        Performed by <strong style={{ color: 'var(--crm-text)' }}>{log.user_name}</strong> · {new Date(log.created_at).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}
-                      </time>
+          ) : (() => {
+            const filteredLogs = logs.filter(log => {
+              const q = logSearch.toLowerCase();
+              return (
+                log.user_name?.toLowerCase().includes(q) ||
+                log.action?.toLowerCase().includes(q) ||
+                log.details?.toLowerCase().includes(q)
+              );
+            });
+
+            const totalPages = Math.ceil(filteredLogs.length / pageSize);
+            const startIndex = (currentPage - 1) * pageSize;
+            const endIndex = Math.min(startIndex + pageSize, filteredLogs.length);
+            const paginatedLogs = filteredLogs.slice(startIndex, endIndex);
+
+            return (
+              <>
+                <div className="crm-activity-log" style={{ background: 'var(--crm-bg-card)', border: '1px solid var(--crm-border)', borderRadius: 'var(--crm-radius)', padding: 24, maxHeight: 'calc(100vh - 350px)', overflowY: 'auto' }}>
+                  {filteredLogs.length === 0 ? (
+                    <div className="crm-empty" style={{ padding: '20px 0' }}>
+                      <Search size={32} style={{ color: 'var(--crm-text-muted)', marginBottom: 8 }} />
+                      <h3>No matching activity logs</h3>
+                      <p>Try searching for a different action or user</p>
+                    </div>
+                  ) : (
+                    paginatedLogs.map(log => (
+                      <div key={log.id} className="crm-activity-item" style={{ marginBottom: 20 }}>
+                        <div className="crm-activity-dot" style={{ background: 'var(--crm-accent)' }} />
+                        <div className="crm-activity-content">
+                          <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--crm-text)' }}>
+                            <span style={{ fontWeight: 700, color: 'var(--crm-accent)', marginRight: 6 }}>{log.action}</span>
+                            — {log.details}
+                          </p>
+                          <time style={{ display: 'block', fontSize: '0.75rem', color: 'var(--crm-text-secondary)', marginTop: 4 }}>
+                            Performed by <strong style={{ color: 'var(--crm-text)' }}>{log.user_name}</strong> · {new Date(log.created_at).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}
+                          </time>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+
+                {filteredLogs.length > 0 && (
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    padding: '12px 24px',
+                    border: '1px solid var(--crm-border)',
+                    borderRadius: 'var(--crm-radius)',
+                    background: 'var(--crm-bg-card)',
+                    gap: 16,
+                    flexWrap: 'wrap',
+                    marginTop: 8
+                  }}>
+                    <div style={{ fontSize: '0.85rem', color: 'var(--crm-text-secondary)' }}>
+                      Showing <strong style={{ color: 'var(--crm-text)' }}>{filteredLogs.length === 0 ? 0 : startIndex + 1}</strong> to <strong style={{ color: 'var(--crm-text)' }}>{endIndex}</strong> of <strong style={{ color: 'var(--crm-text)' }}>{filteredLogs.length}</strong> activities
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <button
+                        className="crm-btn crm-btn-secondary crm-btn-sm"
+                        onClick={() => setCurrentPage(1)}
+                        disabled={currentPage === 1}
+                        style={{ padding: '6px 8px' }}
+                        title="First Page"
+                      >
+                        <ChevronsLeft size={16} />
+                      </button>
+                      <button
+                        className="crm-btn crm-btn-secondary crm-btn-sm"
+                        onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                        disabled={currentPage === 1}
+                        style={{ padding: '6px 8px' }}
+                        title="Previous Page"
+                      >
+                        <ChevronLeft size={16} />
+                      </button>
+
+                      <span style={{ fontSize: '0.85rem', color: 'var(--crm-text-secondary)', padding: '0 8px' }}>
+                        Page <strong style={{ color: 'var(--crm-text)' }}>{currentPage}</strong> of <strong style={{ color: 'var(--crm-text)' }}>{totalPages}</strong>
+                      </span>
+
+                      <button
+                        className="crm-btn crm-btn-secondary crm-btn-sm"
+                        onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                        disabled={currentPage === totalPages || totalPages === 0}
+                        style={{ padding: '6px 8px' }}
+                        title="Next Page"
+                      >
+                        <ChevronRight size={16} />
+                      </button>
+                      <button
+                        className="crm-btn crm-btn-secondary crm-btn-sm"
+                        onClick={() => setCurrentPage(totalPages)}
+                        disabled={currentPage === totalPages || totalPages === 0}
+                        style={{ padding: '6px 8px' }}
+                        title="Last Page"
+                      >
+                        <ChevronsRight size={16} />
+                      </button>
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: '0.85rem', color: 'var(--crm-text-secondary)' }}>
+                      <span>Items per page:</span>
+                      <select
+                        value={pageSize}
+                        onChange={e => {
+                          setPageSize(Number(e.target.value));
+                          setCurrentPage(1);
+                        }}
+                        className="crm-input"
+                        style={{ padding: '4px 8px', fontSize: '0.8rem', width: 80, height: 'auto' }}
+                      >
+                        <option value={25}>25</option>
+                        <option value={50}>50</option>
+                        <option value={100}>100</option>
+                      </select>
                     </div>
                   </div>
-                ))}
-            </div>
-          )}
+                )}
+              </>
+            );
+          })()}
         </div>
       )}
 
