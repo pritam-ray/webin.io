@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useCrm } from '../context/CrmContext';
-import { ArrowLeft, Plus, Trash2, Download, CloudLightning, Save, HelpCircle, Upload } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2, Download, CloudLightning, Save, HelpCircle, Upload, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
 import { parseExcelOrCsv } from '../utils/excelParser';
 
 export default function SpreadsheetView({ sheetId, onBack }) {
@@ -17,11 +17,16 @@ export default function SpreadsheetView({ sheetId, onBack }) {
   const appendFileInputRef = useRef(null);
   const [importing, setImporting] = useState(false);
 
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(100);
+
   // Initialize sheet data
   useEffect(() => {
     if (sheet) {
       setColumns(sheet.columns || []);
       setRows(sheet.rows || []);
+      setCurrentPage(1); // Reset to page 1 on sheet change
     }
   }, [sheetId]);
 
@@ -62,6 +67,11 @@ export default function SpreadsheetView({ sheetId, onBack }) {
     });
     const updatedRows = [...rows, newRow];
     setRows(updatedRows);
+
+    // Automatically navigate to the last page to show the new row
+    const newTotalPages = Math.ceil(updatedRows.length / pageSize);
+    setCurrentPage(newTotalPages || 1);
+
     triggerAutoSave(columns, updatedRows);
     logCrmActivity(null, 'Spreadsheet Row Added', `Added a new row to list "${sheet.title}"`);
   };
@@ -69,6 +79,13 @@ export default function SpreadsheetView({ sheetId, onBack }) {
   const deleteRow = (rowIndex) => {
     const updatedRows = rows.filter((_, idx) => idx !== rowIndex);
     setRows(updatedRows);
+
+    // Adjust page index if out of bounds after deletion
+    const newTotalPages = Math.ceil(updatedRows.length / pageSize);
+    if (currentPage > newTotalPages) {
+      setCurrentPage(Math.max(newTotalPages, 1));
+    }
+
     triggerAutoSave(columns, updatedRows);
     logCrmActivity(null, 'Spreadsheet Row Deleted', `Deleted row ${rowIndex + 1} from list "${sheet.title}"`);
   };
@@ -184,6 +201,7 @@ export default function SpreadsheetView({ sheetId, onBack }) {
         const updatedRows = [...rows, ...mappedRows];
         setColumns(newCols);
         setRows(updatedRows);
+        setCurrentPage(1);
         triggerAutoSave(newCols, updatedRows);
         addToast(`Appended ${parsed.rows.length} rows successfully`, 'success');
         logCrmActivity(null, 'Spreadsheet Appended', `Appended ${parsed.rows.length} rows to list "${sheet.title}"`);
@@ -193,6 +211,7 @@ export default function SpreadsheetView({ sheetId, onBack }) {
         if (proceed) {
           setColumns(parsed.columns);
           setRows(parsed.rows);
+          setCurrentPage(1);
           triggerAutoSave(parsed.columns, parsed.rows);
           addToast('Spreadsheet replaced with imported data', 'success');
           logCrmActivity(null, 'Spreadsheet Replaced', `Replaced all data in "${sheet.title}" with imported file`);
@@ -310,112 +329,204 @@ export default function SpreadsheetView({ sheetId, onBack }) {
         </div>
 
         {/* Spreadsheet table wrapper */}
-        <div style={{ overflow: 'auto', flex: 1 }}>
-          <table className="crm-table" style={{ borderCollapse: 'separate', borderSpacing: 0, width: 'max-content', minWidth: '100%' }}>
-            <thead>
-              <tr style={{ background: 'var(--crm-bg-elevated)' }}>
-                {/* Actions Header */}
-                <th style={{ width: 44, textAlign: 'center', borderRight: '1px solid var(--crm-border)', position: 'sticky', left: 0, zIndex: 10, background: 'var(--crm-bg-elevated)' }}></th>
-                
-                {/* Column Headers */}
-                {columns.map((col, idx) => (
-                  <th key={col.id} style={{ minWidth: 150, padding: '10px 14px', borderRight: '1px solid var(--crm-border)', borderBottom: '1px solid var(--crm-border)' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
-                      <span style={{ fontWeight: 600, color: 'var(--crm-text)' }}>{col.label}</span>
+        {(() => {
+          const totalPages = Math.ceil(rows.length / pageSize);
+          const startIndex = (currentPage - 1) * pageSize;
+          const endIndex = Math.min(startIndex + pageSize, rows.length);
+          const paginatedRows = rows.slice(startIndex, endIndex);
+
+          return (
+            <>
+              <div style={{ overflow: 'auto', flex: 1 }}>
+                <table className="crm-table" style={{ borderCollapse: 'separate', borderSpacing: 0, width: 'max-content', minWidth: '100%' }}>
+                  <thead>
+                    <tr style={{ background: 'var(--crm-bg-elevated)' }}>
+                      {/* Actions Header */}
+                      <th style={{ width: 44, textAlign: 'center', borderRight: '1px solid var(--crm-border)', position: 'sticky', left: 0, zIndex: 10, background: 'var(--crm-bg-elevated)' }}></th>
                       
-                      {/* Delete Column button - prevent delete for Name column to avoid blank sheet */}
-                      {col.id !== 'col_name' && (
-                        <button
-                          type="button"
-                          className="crm-btn-ghost"
-                          onClick={() => deleteColumn(col.id, col.label)}
-                          style={{ padding: 2, borderRadius: 4, display: 'inline-flex', alignSelf: 'center', color: 'var(--crm-text-muted)' }}
-                          title={`Delete column "${col.label}"`}
-                        >
-                          <Trash2 size={12} />
-                        </button>
-                      )}
-                    </div>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((row, rowIndex) => (
-                <tr key={row.id}>
-                  {/* Row Delete Action */}
-                  <td style={{ 
-                    textAlign: 'center', 
-                    borderRight: '1px solid var(--crm-border)', 
-                    borderBottom: '1px solid var(--crm-border)',
-                    position: 'sticky', 
-                    left: 0, 
-                    zIndex: 9, 
-                    background: 'var(--crm-bg-card)', 
-                    padding: 8 
-                  }}>
-                    <button
-                      className="crm-btn crm-btn-ghost crm-btn-sm"
-                      onClick={() => deleteRow(rowIndex)}
-                      style={{ padding: 4, color: 'var(--crm-red)', display: 'inline-flex' }}
-                      title="Delete row"
-                    >
-                      <Trash2 size={14} />
-                    </button>
-                  </td>
-
-                  {/* Row Cells */}
-                  {columns.map(col => {
-                    const isEditing = editingCell?.rowIndex === rowIndex && editingCell?.colId === col.id;
-                    const cellValue = row[col.id] || '';
-
-                    return (
-                      <td
-                        key={col.id}
-                        onDoubleClick={() => startEditing(rowIndex, col.id, cellValue)}
-                        style={{
-                          borderRight: '1px solid var(--crm-border)',
-                          borderBottom: '1px solid var(--crm-border)',
-                          padding: isEditing ? '0' : '10px 14px',
-                          background: isEditing ? 'var(--crm-bg-input)' : 'transparent',
-                          minWidth: 150,
-                          verticalAlign: 'middle',
-                          position: 'relative'
-                        }}
-                      >
-                        {isEditing ? (
-                          <input
-                            type="text"
-                            value={cellValue}
-                            onChange={e => handleCellChange(rowIndex, col.id, e.target.value)}
-                            onBlur={() => finishEditing(rowIndex, col.id, cellValue)}
-                            onKeyDown={e => {
-                              if (e.key === 'Enter') finishEditing(rowIndex, col.id, cellValue);
-                            }}
-                            className="crm-input"
-                            autoFocus
-                            style={{
-                              border: 'none',
-                              background: 'transparent',
-                              padding: '10px 14px',
-                              borderRadius: 0,
-                              height: '100%',
-                              width: '100%'
-                            }}
-                          />
-                        ) : (
-                          <div style={{ minHeight: 20, whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
-                            {cellValue || <span style={{ color: 'var(--crm-text-muted)', fontSize: '0.8rem', fontStyle: 'italic' }}>empty</span>}
+                      {/* Column Headers */}
+                      {columns.map((col, idx) => (
+                        <th key={col.id} style={{ minWidth: 150, padding: '10px 14px', borderRight: '1px solid var(--crm-border)', borderBottom: '1px solid var(--crm-border)' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
+                            <span style={{ fontWeight: 600, color: 'var(--crm-text)' }}>{col.label}</span>
+                            
+                            {/* Delete Column button - prevent delete for Name column to avoid blank sheet */}
+                            {col.id !== 'col_name' && (
+                              <button
+                                type="button"
+                                className="crm-btn-ghost"
+                                onClick={() => deleteColumn(col.id, col.label)}
+                                style={{ padding: 2, borderRadius: 4, display: 'inline-flex', alignSelf: 'center', color: 'var(--crm-text-muted)' }}
+                                title={`Delete column "${col.label}"`}
+                              >
+                                <Trash2 size={12} />
+                              </button>
+                            )}
                           </div>
-                        )}
-                      </td>
-                    );
-                  })}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {paginatedRows.map((row, pageRowIndex) => {
+                      const absoluteRowIndex = startIndex + pageRowIndex;
+                      return (
+                        <tr key={row.id}>
+                          {/* Row Delete Action */}
+                          <td style={{ 
+                            textAlign: 'center', 
+                            borderRight: '1px solid var(--crm-border)', 
+                            borderBottom: '1px solid var(--crm-border)',
+                            position: 'sticky', 
+                            left: 0, 
+                            zIndex: 9, 
+                            background: 'var(--crm-bg-card)', 
+                            padding: 8 
+                          }}>
+                            <button
+                              className="crm-btn crm-btn-ghost crm-btn-sm"
+                              onClick={() => deleteRow(absoluteRowIndex)}
+                              style={{ padding: 4, color: 'var(--crm-red)', display: 'inline-flex' }}
+                              title="Delete row"
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          </td>
+
+                          {/* Row Cells */}
+                          {columns.map(col => {
+                            const isEditing = editingCell?.rowIndex === absoluteRowIndex && editingCell?.colId === col.id;
+                            const cellValue = row[col.id] || '';
+
+                            return (
+                              <td
+                                key={col.id}
+                                onDoubleClick={() => startEditing(absoluteRowIndex, col.id, cellValue)}
+                                style={{
+                                  borderRight: '1px solid var(--crm-border)',
+                                  borderBottom: '1px solid var(--crm-border)',
+                                  padding: isEditing ? '0' : '10px 14px',
+                                  background: isEditing ? 'var(--crm-bg-input)' : 'transparent',
+                                  minWidth: 150,
+                                  verticalAlign: 'middle',
+                                  position: 'relative'
+                                }}
+                              >
+                                {isEditing ? (
+                                  <input
+                                    type="text"
+                                    value={cellValue}
+                                    onChange={e => handleCellChange(absoluteRowIndex, col.id, e.target.value)}
+                                    onBlur={() => finishEditing(absoluteRowIndex, col.id, cellValue)}
+                                    onKeyDown={e => {
+                                      if (e.key === 'Enter') finishEditing(absoluteRowIndex, col.id, cellValue);
+                                    }}
+                                    className="crm-input"
+                                    autoFocus
+                                    style={{
+                                      border: 'none',
+                                      background: 'transparent',
+                                      padding: '10px 14px',
+                                      borderRadius: 0,
+                                      height: '100%',
+                                      width: '100%'
+                                    }}
+                                  />
+                                ) : (
+                                  <div style={{ minHeight: 20, whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
+                                    {cellValue || <span style={{ color: 'var(--crm-text-muted)', fontSize: '0.8rem', fontStyle: 'italic' }}>empty</span>}
+                                  </div>
+                                )}
+                              </td>
+                            );
+                          })}
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Pagination Footer */}
+              <div style={{ 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                alignItems: 'center', 
+                padding: '12px 24px', 
+                borderTop: '1px solid var(--crm-border)', 
+                background: 'var(--crm-bg-elevated)',
+                gap: 16,
+                flexWrap: 'wrap'
+              }}>
+                <div style={{ fontSize: '0.85rem', color: 'var(--crm-text-secondary)' }}>
+                  Showing <strong style={{ color: 'var(--crm-text)' }}>{rows.length === 0 ? 0 : startIndex + 1}</strong> to <strong style={{ color: 'var(--crm-text)' }}>{endIndex}</strong> of <strong style={{ color: 'var(--crm-text)' }}>{rows.length}</strong> rows
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <button 
+                    className="crm-btn crm-btn-secondary crm-btn-sm" 
+                    onClick={() => setCurrentPage(1)} 
+                    disabled={currentPage === 1}
+                    style={{ padding: '6px 8px' }}
+                    title="First Page"
+                  >
+                    <ChevronsLeft size={16} />
+                  </button>
+                  <button 
+                    className="crm-btn crm-btn-secondary crm-btn-sm" 
+                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} 
+                    disabled={currentPage === 1}
+                    style={{ padding: '6px 8px' }}
+                    title="Previous Page"
+                  >
+                    <ChevronLeft size={16} />
+                  </button>
+                  
+                  <span style={{ fontSize: '0.85rem', color: 'var(--crm-text-secondary)', padding: '0 8px' }}>
+                    Page <strong style={{ color: 'var(--crm-text)' }}>{currentPage}</strong> of <strong style={{ color: 'var(--crm-text)' }}>{totalPages}</strong>
+                  </span>
+
+                  <button 
+                    className="crm-btn crm-btn-secondary crm-btn-sm" 
+                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} 
+                    disabled={currentPage === totalPages || totalPages === 0}
+                    style={{ padding: '6px 8px' }}
+                    title="Next Page"
+                  >
+                    <ChevronRight size={16} />
+                  </button>
+                  <button 
+                    className="crm-btn crm-btn-secondary crm-btn-sm" 
+                    onClick={() => setCurrentPage(totalPages)} 
+                    disabled={currentPage === totalPages || totalPages === 0}
+                    style={{ padding: '6px 8px' }}
+                    title="Last Page"
+                  >
+                    <ChevronsRight size={16} />
+                  </button>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: '0.85rem', color: 'var(--crm-text-secondary)' }}>
+                  <span>Rows per page:</span>
+                  <select
+                    value={pageSize}
+                    onChange={e => {
+                      setPageSize(Number(e.target.value));
+                      setCurrentPage(1);
+                    }}
+                    className="crm-input"
+                    style={{ padding: '4px 8px', fontSize: '0.8rem', width: 80, height: 'auto' }}
+                  >
+                    <option value={50}>50</option>
+                    <option value={100}>100</option>
+                    <option value={250}>250</option>
+                    <option value={500}>500</option>
+                  </select>
+                </div>
+              </div>
+            </>
+          );
+        })()}
       </div>
     </div>
   );
