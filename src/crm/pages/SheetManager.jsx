@@ -23,6 +23,11 @@ export default function SheetManager() {
   const [sharedUsers, setSharedUsers] = useState([]);
   const [shareSearch, setShareSearch] = useState('');
 
+  // Filter states
+  const [searchTerm, setSearchTerm] = useState('');
+  const [ownershipFilter, setOwnershipFilter] = useState('all');
+  const [creatorFilter, setCreatorFilter] = useState('all');
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!newTitle.trim()) return;
@@ -267,70 +272,188 @@ CREATE POLICY "Allow all for crm_sheets"
           <h3>No spreadsheets created</h3>
           <p>Create your first client list sheet to handle team sharing.</p>
         </div>
-      ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 16 }}>
-          {sheets.map(s => {
-            const rowCount = s.rows?.length || 0;
-            const colCount = s.columns?.length || 0;
+      ) : (() => {
+        const filteredSheets = sheets.filter(s => {
+          const matchesSearch = s.title.toLowerCase().includes(searchTerm.toLowerCase());
+          
+          let matchesOwnership = true;
+          if (ownershipFilter === 'mine') {
+            matchesOwnership = s.created_by === currentUser?.id;
+          } else if (ownershipFilter === 'shared') {
+            matchesOwnership = s.created_by !== currentUser?.id;
+          }
 
-            return (
-              <div
-                key={s.id}
-                className="crm-card"
-                onClick={() => setActiveSheetId(s.id)}
-                style={{
-                  cursor: 'pointer',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
-                  minHeight: '160px',
-                  position: 'relative'
-                }}
-              >
-                <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
-                    <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 700, color: 'var(--crm-text)' }}>
-                      {s.title}
-                    </h3>
-                    <div style={{ display: 'flex', gap: 4 }}>
-                      {(currentUser?.id === s.created_by || currentUser?.roles?.includes('admin')) && (
-                        <button
-                          className="crm-btn crm-btn-ghost"
-                          onClick={(e) => handleOpenShareModal(e, s)}
-                          style={{ padding: 4, color: 'var(--crm-text-muted)' }}
-                          title="Share List"
-                        >
-                          <Share2 size={16} />
-                        </button>
-                      )}
-                      <button
-                        className="crm-btn crm-btn-ghost"
-                        onClick={(e) => handleDelete(e, s.id, s.title)}
-                        style={{ padding: 4, color: 'var(--crm-text-muted)' }}
-                        title="Delete List"
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
-                  </div>
-                  <p style={{ fontSize: '0.8rem', color: 'var(--crm-text-secondary)', marginTop: 8 }}>
-                    {rowCount} rows · {colCount} columns
-                  </p>
-                </div>
+          let matchesCreator = true;
+          if (creatorFilter !== 'all') {
+            matchesCreator = s.created_by === creatorFilter;
+          }
 
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--crm-border)', paddingTop: 12, marginTop: 16 }}>
-                  <span style={{ fontSize: '0.72rem', color: 'var(--crm-text-muted)', display: 'flex', alignItems: 'center', gap: 4 }}>
-                    <Calendar size={12} /> {new Date(s.created_at).toLocaleDateString()}
-                  </span>
-                  <span style={{ fontSize: '0.78rem', color: 'var(--crm-accent)', display: 'flex', alignItems: 'center', gap: 4, fontWeight: 600 }}>
-                    Open Editor <ArrowRight size={14} />
-                  </span>
-                </div>
+          return matchesSearch && matchesOwnership && matchesCreator;
+        });
+
+        return (
+          <>
+            {/* Search & Filters Toolbar */}
+            <div style={{
+              display: 'flex',
+              gap: 12,
+              marginBottom: 24,
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              background: 'var(--crm-bg-card)',
+              border: '1px solid var(--crm-border)',
+              padding: '12px 16px',
+              borderRadius: 'var(--crm-radius)',
+              flexShrink: 0
+            }}>
+              {/* Search input */}
+              <div className="crm-table-search" style={{ flex: 1, minWidth: '200px', margin: 0 }}>
+                <Search size={16} />
+                <input
+                  type="text"
+                  placeholder="Search client lists..."
+                  value={searchTerm}
+                  onChange={e => setSearchTerm(e.target.value)}
+                  style={{ width: '100%', paddingLeft: '36px' }}
+                />
               </div>
-            );
-          })}
-        </div>
-      )}
+
+              {/* Ownership Filter Buttons */}
+              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                <button
+                  onClick={() => setOwnershipFilter('all')}
+                  className={`crm-btn crm-btn-sm ${ownershipFilter === 'all' ? 'crm-btn-primary' : 'crm-btn-secondary'}`}
+                  type="button"
+                  style={{ padding: '6px 12px' }}
+                >
+                  All Lists
+                </button>
+                <button
+                  onClick={() => setOwnershipFilter('mine')}
+                  className={`crm-btn crm-btn-sm ${ownershipFilter === 'mine' ? 'crm-btn-primary' : 'crm-btn-secondary'}`}
+                  type="button"
+                  style={{ padding: '6px 12px' }}
+                >
+                  My Lists
+                </button>
+                <button
+                  onClick={() => setOwnershipFilter('shared')}
+                  className={`crm-btn crm-btn-sm ${ownershipFilter === 'shared' ? 'crm-btn-primary' : 'crm-btn-secondary'}`}
+                  type="button"
+                  style={{ padding: '6px 12px' }}
+                >
+                  Shared with Me
+                </button>
+              </div>
+
+              {/* Creator Filter Dropdown */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{ fontSize: '0.8rem', color: 'var(--crm-text-secondary)' }}>Created by:</span>
+                <select
+                  value={creatorFilter}
+                  onChange={e => setCreatorFilter(e.target.value)}
+                  className="crm-select"
+                  style={{ padding: '6px 32px 6px 12px', fontSize: '0.8rem', width: '160px', height: 'auto', backgroundPosition: 'right 8px center' }}
+                >
+                  <option value="all">All Members</option>
+                  {users.map(u => (
+                    <option key={u.id} value={u.id}>{u.name}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {filteredSheets.length === 0 ? (
+              <div className="crm-empty" style={{ padding: '40px 20px' }}>
+                <Search size={40} style={{ color: 'var(--crm-text-muted)', marginBottom: 12 }} />
+                <h3>No matching spreadsheets</h3>
+                <p>Try modifying your search or filter selections</p>
+                <button 
+                  className="crm-btn crm-btn-secondary crm-btn-sm" 
+                  style={{ marginTop: 12 }}
+                  onClick={() => {
+                    setSearchTerm('');
+                    setOwnershipFilter('all');
+                    setCreatorFilter('all');
+                  }}
+                >
+                  Clear Filters
+                </button>
+              </div>
+            ) : (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 16 }}>
+                {filteredSheets.map(s => {
+                  const rowCount = s.rows?.length || 0;
+                  const colCount = s.columns?.length || 0;
+                  const creator = users.find(u => u.id === s.created_by);
+                  const creatorName = creator ? creator.name : 'Unknown Creator';
+
+                  return (
+                    <div
+                      key={s.id}
+                      className="crm-card"
+                      onClick={() => setActiveSheetId(s.id)}
+                      style={{
+                        cursor: 'pointer',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'space-between',
+                        minHeight: '160px',
+                        position: 'relative'
+                      }}
+                    >
+                      <div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
+                          <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 700, color: 'var(--crm-text)' }}>
+                            {s.title}
+                          </h3>
+                          <div style={{ display: 'flex', gap: 4 }}>
+                            {(currentUser?.id === s.created_by || currentUser?.roles?.includes('admin')) && (
+                              <button
+                                className="crm-btn crm-btn-ghost"
+                                onClick={(e) => handleOpenShareModal(e, s)}
+                                style={{ padding: 4, color: 'var(--crm-text-muted)' }}
+                                title="Share List"
+                              >
+                                <Share2 size={16} />
+                              </button>
+                            )}
+                            <button
+                              className="crm-btn crm-btn-ghost"
+                              onClick={(e) => handleDelete(e, s.id, s.title)}
+                              style={{ padding: 4, color: 'var(--crm-text-muted)' }}
+                              title="Delete List"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </div>
+                        </div>
+                        <p style={{ fontSize: '0.8rem', color: 'var(--crm-text-secondary)', marginTop: 8 }}>
+                          {rowCount} rows · {colCount} columns
+                        </p>
+                      </div>
+
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--crm-border)', paddingTop: 12, marginTop: 16 }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                          <span style={{ fontSize: '0.72rem', color: 'var(--crm-text-secondary)', display: 'flex', alignItems: 'center', gap: 4 }}>
+                            <User size={12} style={{ color: 'var(--crm-accent)' }} /> Created by: <strong style={{ color: 'var(--crm-text)' }}>{creatorName}</strong>
+                          </span>
+                          <span style={{ fontSize: '0.72rem', color: 'var(--crm-text-muted)', display: 'flex', alignItems: 'center', gap: 4 }}>
+                            <Calendar size={12} /> {new Date(s.created_at).toLocaleDateString()}
+                          </span>
+                        </div>
+                        <span style={{ fontSize: '0.78rem', color: 'var(--crm-accent)', display: 'flex', alignItems: 'center', gap: 4, fontWeight: 600 }}>
+                          Open Editor <ArrowRight size={14} />
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </>
+        );
+      })()}
 
       {/* Multi-sheet Import Modal */}
       {showImportModal && (
