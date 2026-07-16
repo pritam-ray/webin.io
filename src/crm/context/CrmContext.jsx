@@ -96,10 +96,14 @@ export function CrmProvider({ children }) {
   // Fetch sheets from Supabase
   const fetchSheets = useCallback(async () => {
     setLoadingSheets(true);
-    const { data, error } = await supabase
-      .from('crm_sheets')
-      .select('*')
-      .order('created_at', { ascending: false });
+    let query = supabase.from('crm_sheets').select('*');
+    
+    const isAdmin = currentUser?.roles?.includes('admin');
+    if (!isAdmin && currentUser?.id) {
+      query = query.or(`created_by.eq.${currentUser.id},shared_with.cs.{${currentUser.id}}`);
+    }
+
+    const { data, error } = await query.order('created_at', { ascending: false });
 
     setLoadingSheets(false);
     if (error) {
@@ -120,7 +124,7 @@ export function CrmProvider({ children }) {
     setSheetsError(null);
     if (data) setSheets(data);
     return { data };
-  }, [addToast]);
+  }, [addToast, currentUser]);
 
   // Fetch all data when logged in
   useEffect(() => {
@@ -512,6 +516,35 @@ export function CrmProvider({ children }) {
     return { success: true };
   };
 
+  const shareSheet = async (sheetId, sharedWithUserIds) => {
+    const { data, error } = await supabase
+      .from('crm_sheets')
+      .update({ shared_with: sharedWithUserIds })
+      .eq('id', sheetId)
+      .select()
+      .single();
+
+    if (error) {
+      addToast(error.message, 'error');
+      return { error };
+    }
+
+    // Find sheet title
+    const sheet = sheets.find(s => s.id === sheetId);
+    const title = sheet ? sheet.title : 'Spreadsheet';
+    
+    // Create detailed log about who this was shared with for audit logs
+    const sharedUsersNames = sharedWithUserIds.map(uid => {
+      const u = users.find(user => user.id === uid);
+      return u ? u.name : uid;
+    }).join(', ') || 'No one';
+
+    await logActivity(null, 'Spreadsheet Shared', `Shared "${title}" with: ${sharedUsersNames}`);
+    await fetchSheets();
+    addToast('Spreadsheet sharing updated successfully!', 'success');
+    return { data, success: true };
+  };
+
   // ---- Computed Stats ----
   const getStats = useCallback(() => {
     const total = leads.length;
@@ -561,6 +594,7 @@ export function CrmProvider({ children }) {
     createSheet,
     updateSheet,
     deleteSheet,
+    shareSheet,
     addToast,
   };
 

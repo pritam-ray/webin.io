@@ -1,11 +1,11 @@
 import { useState, useRef } from 'react';
 import { useCrm } from '../context/CrmContext';
-import { FileSpreadsheet, Plus, Trash2, Calendar, User, Database, ArrowRight, Upload, X, CheckSquare, Square } from 'lucide-react';
+import { FileSpreadsheet, Plus, Trash2, Calendar, User, Database, ArrowRight, Upload, X, CheckSquare, Square, Share2, Search } from 'lucide-react';
 import SpreadsheetView from '../components/SpreadsheetView';
 import { parseExcelOrCsv } from '../utils/excelParser';
 
 export default function SheetManager() {
-  const { sheets, createSheet, deleteSheet, loadingSheets, sheetsError, addToast } = useCrm();
+  const { sheets, createSheet, deleteSheet, shareSheet, currentUser, users, loadingSheets, sheetsError, addToast } = useCrm();
   const [newTitle, setNewTitle] = useState('');
   const [showAdd, setShowAdd] = useState(false);
   const [activeSheetId, setActiveSheetId] = useState(null);
@@ -16,6 +16,12 @@ export default function SheetManager() {
   const [showImportModal, setShowImportModal] = useState(false);
   const [importSheets, setImportSheets] = useState([]);
   const [importBaseName, setImportBaseName] = useState('');
+
+  // Sheet sharing states
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [sharingSheet, setSharingSheet] = useState(null);
+  const [sharedUsers, setSharedUsers] = useState([]);
+  const [shareSearch, setShareSearch] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -96,6 +102,31 @@ export default function SheetManager() {
     e.stopPropagation();
     if (confirm(`Are you sure you want to delete the spreadsheet "${title}"? This action cannot be undone.`)) {
       await deleteSheet(sheetId);
+    }
+  };
+
+  const handleOpenShareModal = (e, sheet) => {
+    e.stopPropagation();
+    setSharingSheet(sheet);
+    setSharedUsers(sheet.shared_with || []);
+    setShareSearch('');
+    setShowShareModal(true);
+  };
+
+  const toggleUserShare = (userId) => {
+    setSharedUsers(prev =>
+      prev.includes(userId)
+        ? prev.filter(id => id !== userId)
+        : [...prev, userId]
+    );
+  };
+
+  const handleShareSubmit = async () => {
+    if (!sharingSheet) return;
+    const { success } = await shareSheet(sharingSheet.id, sharedUsers);
+    if (success) {
+      setShowShareModal(false);
+      setSharingSheet(null);
     }
   };
 
@@ -261,14 +292,26 @@ CREATE POLICY "Allow all for crm_sheets"
                     <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 700, color: 'var(--crm-text)' }}>
                       {s.title}
                     </h3>
-                    <button
-                      className="crm-btn crm-btn-ghost"
-                      onClick={(e) => handleDelete(e, s.id, s.title)}
-                      style={{ padding: 4, color: 'var(--crm-text-muted)' }}
-                      title="Delete List"
-                    >
-                      <Trash2 size={16} />
-                    </button>
+                    <div style={{ display: 'flex', gap: 4 }}>
+                      {(currentUser?.id === s.created_by || currentUser?.roles?.includes('admin')) && (
+                        <button
+                          className="crm-btn crm-btn-ghost"
+                          onClick={(e) => handleOpenShareModal(e, s)}
+                          style={{ padding: 4, color: 'var(--crm-text-muted)' }}
+                          title="Share List"
+                        >
+                          <Share2 size={16} />
+                        </button>
+                      )}
+                      <button
+                        className="crm-btn crm-btn-ghost"
+                        onClick={(e) => handleDelete(e, s.id, s.title)}
+                        style={{ padding: 4, color: 'var(--crm-text-muted)' }}
+                        title="Delete List"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
                   </div>
                   <p style={{ fontSize: '0.8rem', color: 'var(--crm-text-secondary)', marginTop: 8 }}>
                     {rowCount} rows · {colCount} columns
@@ -394,6 +437,154 @@ CREATE POLICY "Allow all for crm_sheets"
                 disabled={importSheets.every(s => !s.selected)}
               >
                 Import Selected ({importSheets.filter(s => s.selected).length})
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Share List Modal */}
+      {showShareModal && sharingSheet && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0, 0, 0, 0.75)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 9999,
+          backdropFilter: 'blur(4px)'
+        }}>
+          <div style={{
+            background: 'var(--crm-bg-elevated)',
+            border: '1px solid var(--crm-border)',
+            borderRadius: 'var(--crm-radius)',
+            width: '100%',
+            maxWidth: '460px',
+            boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.3)',
+            padding: 24,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 16
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--crm-border)', paddingBottom: 12 }}>
+              <h3 style={{ margin: 0, color: 'var(--crm-text)' }}>Share "{sharingSheet.title}"</h3>
+              <button className="crm-btn-ghost" onClick={() => setShowShareModal(false)} style={{ color: 'var(--crm-text-muted)', padding: 4 }}>
+                <X size={20} />
+              </button>
+            </div>
+
+            <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--crm-text-secondary)' }}>
+              Choose which team members can view and collaborate on this client list:
+            </p>
+
+            <div className="crm-table-search" style={{ margin: 0 }}>
+              <Search size={16} />
+              <input
+                type="text"
+                placeholder="Search team members..."
+                value={shareSearch}
+                onChange={e => setShareSearch(e.target.value)}
+                style={{ width: '100%', background: 'transparent', border: 'none', color: 'var(--crm-text)', outline: 'none' }}
+              />
+            </div>
+
+            <div style={{
+              maxHeight: '200px',
+              overflowY: 'auto',
+              border: '1px solid var(--crm-border)',
+              borderRadius: 6,
+              background: 'var(--crm-bg-card)'
+            }}>
+              {users
+                .filter(u => u.id !== currentUser?.id)
+                .filter(u => {
+                  const q = shareSearch.toLowerCase();
+                  return u.name?.toLowerCase().includes(q) || u.email?.toLowerCase().includes(q);
+                })
+                .map((member) => {
+                  const isShared = sharedUsers.includes(member.id);
+                  const userInitials = member.name?.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2) || '?';
+                  return (
+                    <div
+                      key={member.id}
+                      onClick={() => toggleUserShare(member.id)}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '12px 16px',
+                        borderBottom: '1px solid var(--crm-border)',
+                        cursor: 'pointer',
+                        background: isShared ? 'rgba(59, 130, 246, 0.05)' : 'transparent',
+                        transition: 'background 0.2s'
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                        {isShared ? (
+                          <CheckSquare size={18} style={{ color: 'var(--crm-accent)' }} />
+                        ) : (
+                          <Square size={18} style={{ color: 'var(--crm-text-muted)' }} />
+                        )}
+                        <div style={{
+                          width: 32,
+                          height: 32,
+                          borderRadius: '50%',
+                          background: 'var(--crm-border)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '0.78rem',
+                          fontWeight: 700,
+                          color: 'var(--crm-text)'
+                        }}>
+                          {userInitials}
+                        </div>
+                        <div>
+                          <span style={{ fontWeight: isShared ? 600 : 400, color: 'var(--crm-text)', fontSize: '0.9rem', display: 'block' }}>{member.name}</span>
+                          <span style={{ fontSize: '0.75rem', color: 'var(--crm-text-muted)', display: 'block' }}>{member.email}</span>
+                        </div>
+                      </div>
+                      <div style={{ display: 'flex', gap: 4 }}>
+                        {member.roles?.map(r => (
+                          <span
+                            key={r}
+                            style={{
+                              fontSize: '0.62rem',
+                              padding: '2px 6px',
+                              borderRadius: 4,
+                              background: 'var(--crm-border)',
+                              color: 'var(--crm-text-secondary)',
+                              fontWeight: 600,
+                              textTransform: 'uppercase'
+                            }}
+                          >
+                            {r}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+              {users.filter(u => u.id !== currentUser?.id).length === 0 && (
+                <div style={{ padding: 24, textAlign: 'center', color: 'var(--crm-text-muted)', fontSize: '0.85rem' }}>
+                  No other team members found.
+                </div>
+              )}
+            </div>
+
+            <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 8 }}>
+              <button className="crm-btn crm-btn-secondary crm-btn-sm" onClick={() => setShowShareModal(false)}>
+                Cancel
+              </button>
+              <button
+                className="crm-btn crm-btn-primary crm-btn-sm"
+                onClick={handleShareSubmit}
+              >
+                Save Sharing
               </button>
             </div>
           </div>

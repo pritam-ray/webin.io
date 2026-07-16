@@ -52,6 +52,7 @@ CREATE TABLE IF NOT EXISTS crm_sheets (
   columns JSONB NOT NULL DEFAULT '[]'::jsonb,
   rows JSONB NOT NULL DEFAULT '[]'::jsonb,
   created_by UUID REFERENCES crm_users(id) ON DELETE SET NULL,
+  shared_with UUID[] NOT NULL DEFAULT '{}'::uuid[],
   created_at TIMESTAMPTZ DEFAULT now(),
   updated_at TIMESTAMPTZ DEFAULT now()
 );
@@ -114,7 +115,10 @@ VALUES ('Pritam', 'impritamray@gmail.com', 'asdfghjkl;''', ARRAY['admin', 'lead-
 ON CONFLICT (email) DO UPDATE 
 SET roles = EXCLUDED.roles, pin = EXCLUDED.pin;
 
--- 9. Row Level Security Policies
+-- 9. Add shared_with column to sheets table if not exists
+ALTER TABLE crm_sheets ADD COLUMN IF NOT EXISTS shared_with UUID[] NOT NULL DEFAULT '{}'::uuid[];
+
+-- 10. Row Level Security Policies
 ALTER TABLE crm_users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE crm_leads ENABLE ROW LEVEL SECURITY;
 ALTER TABLE crm_activity_log ENABLE ROW LEVEL SECURITY;
