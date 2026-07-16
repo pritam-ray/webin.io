@@ -22,8 +22,16 @@ const footerLinks = {
 };
 
 const Footer = () => {
+  const isHomePage = window.location.pathname === '/';
+  const getLinkHref = (href) => {
+    if (href.startsWith('http') || href.startsWith('tel') || href.startsWith('mailto')) {
+      return href;
+    }
+    return isHomePage ? href : `/${href}`;
+  };
+
   const scrollToSection = (e, href) => {
-    if (href.startsWith('#')) {
+    if (href.startsWith('#') && isHomePage) {
       e.preventDefault();
       document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
     }
@@ -40,7 +48,12 @@ const Footer = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <a href="#" className="footer-logo" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
+            <a href="/" className="footer-logo" onClick={(e) => {
+              if (isHomePage) {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }
+            }}>
               <svg viewBox="0 0 100 100" className="logo-svg" width="28" height="28" style={{ marginRight: '8px', overflow: 'visible' }}>
                 <defs>
                   <linearGradient id="footer-logo-grad-1" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -93,7 +106,7 @@ const Footer = () => {
                 {links.map((link) => (
                   <a
                     key={link.name}
-                    href={link.href}
+                    href={getLinkHref(link.href)}
                     className="footer-link"
                     onClick={(e) => scrollToSection(e, link.href)}
                     {...(link.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}

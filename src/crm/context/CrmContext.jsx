@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '../supabase';
 
 const CrmContext = createContext(null);
@@ -12,6 +12,12 @@ export function CrmProvider({ children }) {
   const [sheetsError, setSheetsError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [toasts, setToasts] = useState([]);
+
+  // Keep a ref of currentUser to prevent dependency loops in callbacks
+  const currentUserRef = useRef(currentUser);
+  useEffect(() => {
+    currentUserRef.current = currentUser;
+  }, [currentUser]);
 
   // Toast helper
   const addToast = useCallback((message, type = 'info') => {
@@ -68,10 +74,11 @@ export function CrmProvider({ children }) {
       setUsers(normalized);
 
       // Keep logged in user's profile and roles synchronized with database updates
-      if (currentUser) {
-        const refreshedMe = normalized.find(u => u.email.toLowerCase() === currentUser.email.toLowerCase());
+      const current = currentUserRef.current;
+      if (current) {
+        const refreshedMe = normalized.find(u => u.email.toLowerCase() === current.email.toLowerCase());
         if (refreshedMe) {
-          const currentStr = JSON.stringify(currentUser);
+          const currentStr = JSON.stringify(current);
           const refreshedStr = JSON.stringify(refreshedMe);
           if (currentStr !== refreshedStr) {
             setCurrentUser(refreshedMe);
@@ -81,7 +88,7 @@ export function CrmProvider({ children }) {
       }
     }
     return { data };
-  }, [addToast, currentUser]);
+  }, [addToast]);
 
   // Fetch leads from Supabase
   const fetchLeads = useCallback(async () => {
@@ -98,9 +105,10 @@ export function CrmProvider({ children }) {
     setLoadingSheets(true);
     let query = supabase.from('crm_sheets').select('*');
     
-    const isAdmin = currentUser?.roles?.includes('admin');
-    if (!isAdmin && currentUser?.id) {
-      query = query.or(`created_by.eq.${currentUser.id},shared_with.cs.{${currentUser.id}}`);
+    const current = currentUserRef.current;
+    const isAdmin = current?.roles?.includes('admin');
+    if (!isAdmin && current?.id) {
+      query = query.or(`created_by.eq.${current.id},shared_with.cs.{${current.id}}`);
     }
 
     const { data, error } = await query.order('created_at', { ascending: false });
@@ -124,16 +132,17 @@ export function CrmProvider({ children }) {
     setSheetsError(null);
     if (data) setSheets(data);
     return { data };
-  }, [addToast, currentUser]);
+  }, [addToast]);
 
-  // Fetch all data when logged in
+  // Fetch all data when logged in (only on initial login state change)
+  const loggedInId = currentUser?.id;
   useEffect(() => {
-    if (currentUser) {
+    if (loggedInId) {
       fetchUsers();
       fetchLeads();
       fetchSheets();
     }
-  }, [currentUser, fetchUsers, fetchLeads, fetchSheets]);
+  }, [loggedInId, fetchUsers, fetchLeads, fetchSheets]);
 
   // Login
   const login = async (email, pin) => {

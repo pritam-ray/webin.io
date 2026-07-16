@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import Marquee from './components/Marquee';
@@ -19,6 +20,19 @@ import './App.css';
 function App() {
   const isEstimateRoute = window.location.pathname === '/estimate-generator';
   const isCrmRoute = window.location.pathname.startsWith('/crm');
+
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (hash && !isCrmRoute && !isEstimateRoute) {
+      const timer = setTimeout(() => {
+        const el = document.querySelector(hash);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 400);
+      return () => clearTimeout(timer);
+    }
+  }, [isCrmRoute, isEstimateRoute]);
 
   if (isCrmRoute) {
     return <CrmApp />;

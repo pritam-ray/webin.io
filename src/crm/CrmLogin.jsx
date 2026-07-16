@@ -67,6 +67,9 @@ export default function CrmLogin() {
             ) : 'Sign In'}
           </button>
         </form>
+        <a href="/" className="crm-back-to-site" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '100%', marginTop: '16px', fontSize: '0.85rem', color: 'var(--crm-text-secondary)', textDecoration: 'none', transition: 'color 0.2s', gap: 6 }}>
+          ← Back to main website
+        </a>
       </div>
     </div>
   );

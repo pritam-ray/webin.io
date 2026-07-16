@@ -49,13 +49,20 @@ const Navbar = () => {
   }, []);
 
   const handleNavClick = (e, href) => {
-    e.preventDefault();
+    const isHomePage = window.location.pathname === '/';
     setMobileOpen(false);
-    const el = document.querySelector(href);
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
+    
+    if (isHomePage) {
+      e.preventDefault();
+      const el = document.querySelector(href);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
     }
   };
+
+  const isHomePage = window.location.pathname === '/';
+  const getLinkHref = (href) => isHomePage ? href : `/${href}`;
 
   return (
     <>
@@ -66,7 +73,13 @@ const Navbar = () => {
         transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
       >
         <div className="navbar-container container">
-          <a href="#" className="navbar-logo" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
+          <a href="/" className="navbar-logo" onClick={(e) => {
+            const isHome = window.location.pathname === '/';
+            if (isHome) {
+              e.preventDefault();
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+          }}>
             <svg viewBox="0 0 100 100" className="logo-svg" width="28" height="28" style={{ marginRight: '8px', overflow: 'visible' }}>
               <defs>
                 <linearGradient id="nav-logo-grad-1" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -95,7 +108,7 @@ const Navbar = () => {
             {navLinks.map((link) => (
               <a
                 key={link.name}
-                href={link.href}
+                href={getLinkHref(link.href)}
                 className="nav-link"
                 onClick={(e) => handleNavClick(e, link.href)}
               >
@@ -157,7 +170,7 @@ const Navbar = () => {
                   {navLinks.map((link, i) => (
                     <div key={link.name} className="mobile-link-overflow">
                       <motion.a
-                        href={link.href}
+                        href={getLinkHref(link.href)}
                         className="mobile-link"
                         onClick={(e) => handleNavClick(e, link.href)}
                         initial={{ y: 50, rotate: 2 }}
