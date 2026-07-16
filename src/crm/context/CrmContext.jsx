@@ -27,7 +27,15 @@ export function CrmProvider({ children }) {
     const saved = localStorage.getItem('crm_session');
     if (saved) {
       try {
-        setCurrentUser(JSON.parse(saved));
+        const userObj = JSON.parse(saved);
+        if (userObj) {
+          if (!userObj.roles && userObj.role) {
+            userObj.roles = [userObj.role];
+          } else if (!userObj.roles) {
+            userObj.roles = ['sales'];
+          }
+          setCurrentUser(userObj);
+        }
       } catch { /* ignore */ }
     }
     setLoading(false);
@@ -58,9 +66,18 @@ export function CrmProvider({ children }) {
         return copy;
       });
       setUsers(normalized);
+
+      // Keep logged in user's profile and roles synchronized with database updates
+      if (currentUser) {
+        const refreshedMe = normalized.find(u => u.email.toLowerCase() === currentUser.email.toLowerCase());
+        if (refreshedMe) {
+          setCurrentUser(refreshedMe);
+          localStorage.setItem('crm_session', JSON.stringify(refreshedMe));
+        }
+      }
     }
     return { data };
-  }, [addToast]);
+  }, [addToast, currentUser]);
 
   // Fetch leads from Supabase
   const fetchLeads = useCallback(async () => {
