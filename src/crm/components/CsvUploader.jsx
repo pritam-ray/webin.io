@@ -1,31 +1,101 @@
 import { useState, useRef } from 'react';
 import { Upload, FileSpreadsheet, AlertTriangle, CheckCircle } from 'lucide-react';
-import { parseCsv, deduplicateLeads } from '../utils/dedup';
+import { deduplicateLeads } from '../utils/dedup';
 import { useCrm } from '../context/CrmContext';
+import { parseExcelOrCsv } from '../utils/excelParser';
 
 export default function CsvUploader({ onImportComplete }) {
-  const { leads, addLeadsBulk } = useCrm();
+  const { leads, addLeadsBulk, addToast } = useCrm();
   const [dragOver, setDragOver] = useState(false);
   const [parsed, setParsed] = useState(null);
   const [dedupResult, setDedupResult] = useState(null);
   const [importing, setImporting] = useState(false);
   const fileRef = useRef(null);
 
-  const handleFile = (file) => {
-    if (!file || !file.name.endsWith('.csv')) {
+  const handleFile = async (file) => {
+    if (!file) return;
+    const isCsv = file.name.endsWith('.csv');
+    const isExcel = file.name.endsWith('.xlsx') || file.name.endsWith('.xls');
+    if (!isCsv && !isExcel) {
+      addToast('Please upload a CSV or Excel (.xlsx, .xls) file', 'error');
       return;
     }
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const text = e.target.result;
-      const parsedLeads = parseCsv(text);
-      setParsed(parsedLeads);
 
-      // Run dedup
-      const result = deduplicateLeads(parsedLeads, leads);
-      setDedupResult(result);
-    };
-    reader.readAsText(file);
+    try {
+      const sheetsData = await parseExcelOrCsv(file);
+      if (sheetsData.length > 0) {
+        // Filter out system and summary sheets (like Overview or Audit Log)
+        const sheetsToProcess = sheetsData.filter(s => 
+          s.name !== 'Overview' && 
+          s.name !== 'System Audit Log' && 
+          s.name !== 'Audit Log' && 
+          s.name !== 'Summary'
+        );
+        
+        // Pick the sheet with the most rows, fallback to the first sheet
+        const sheet = sheetsToProcess.sort((a, b) => b.rows.length - a.rows.length)[0] || sheetsData[0];
+        
+        const mappedLeads = sheet.rows.map(row => {
+          const leadObj = { name: '', phone: '', email: '', company: '', city: '', notes: '' };
+          sheet.columns.forEach(col => {
+            const colLabel = col.label.toLowerCase().trim();
+            const cellVal = row[col.id] ? row[col.id].toString().trim() : '';
+            
+            // Name matching: prioritize primary lead name, prevent director name collision
+            if (
+              (colLabel === 'name' || colLabel.includes('lead name') || colLabel.includes('contact name') || colLabel === 'contact') && 
+              !colLabel.includes('director') && 
+              !colLabel.includes('company') && 
+              !colLabel.includes('business')
+            ) {
+              leadObj.name = cellVal;
+            }
+            else if (colLabel.includes('name') && !leadObj.name && !colLabel.includes('director') && !colLabel.includes('company') && !colLabel.includes('business')) {
+              leadObj.name = cellVal;
+            }
+
+            // Phone matching
+            if (colLabel.includes('phone') || colLabel.includes('mobile') || colLabel.includes('contact') || colLabel.includes('number')) {
+              leadObj.phone = cellVal;
+            }
+
+            // Email matching
+            if (colLabel.includes('email') || colLabel.includes('mail') || colLabel === 'email id') {
+              leadObj.email = cellVal;
+            }
+
+            // Company matching: prioritize company name over business description
+            if (colLabel === 'company name' || colLabel === 'company' || colLabel === 'firm name' || colLabel === 'firm') {
+              leadObj.company = cellVal;
+            }
+            else if ((colLabel.includes('company') || colLabel.includes('org') || colLabel.includes('business')) && !leadObj.company && !colLabel.includes('activity') && !colLabel.includes('type')) {
+              leadObj.company = cellVal;
+            }
+
+            // City matching
+            if (colLabel.includes('city') || colLabel.includes('location') || colLabel === 'place' || colLabel === 'district') {
+              leadObj.city = cellVal;
+            }
+
+            // Notes / Activity description matching
+            if (colLabel.includes('note') || colLabel.includes('remark') || colLabel.includes('comment') || colLabel.includes('description') || colLabel.includes('activity')) {
+              leadObj.notes = cellVal;
+            }
+          });
+          return leadObj;
+        });
+
+        // Filter out empty rows
+        const validLeads = mappedLeads.filter(l => l.name || l.phone || l.email);
+        setParsed(validLeads);
+        const result = deduplicateLeads(validLeads, leads);
+        setDedupResult(result);
+      } else {
+        addToast('No data found in the file', 'error');
+      }
+    } catch (err) {
+      addToast(`Error parsing file: ${err.message}`, 'error');
+    }
   };
 
   const handleDrop = (e) => {
@@ -55,15 +125,15 @@ export default function CsvUploader({ onImportComplete }) {
         onDrop={handleDrop}
       >
         <Upload />
-        <h4>Upload CSV File</h4>
-        <p>Drag & drop your CSV file here, or click to browse</p>
+        <h4>Upload CSV or Excel File</h4>
+        <p>Drag & drop your CSV or Excel (.xlsx, .xls) file here, or click to browse</p>
         <p style={{ marginTop: 8, fontSize: '0.75rem', color: 'var(--crm-text-muted)' }}>
           Expected columns: Name, Phone, Email, Company, City, Notes
         </p>
         <input
           ref={fileRef}
           type="file"
-          accept=".csv"
+          accept=".csv,.xlsx,.xls"
           style={{ display: 'none' }}
           onChange={e => handleFile(e.target.files[0])}
         />
@@ -84,7 +154,7 @@ export default function CsvUploader({ onImportComplete }) {
             )}
             <div className="crm-csv-summary-item" style={{ background: 'rgba(59,130,246,0.1)', color: 'var(--crm-blue)' }}>
               <FileSpreadsheet size={16} />
-              {parsed?.length} total in CSV
+              {parsed?.length} total in file
             </div>
           </div>
 
