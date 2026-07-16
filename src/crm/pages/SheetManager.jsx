@@ -1,11 +1,11 @@
 import { useState, useRef } from 'react';
 import { useCrm } from '../context/CrmContext';
-import { FileSpreadsheet, Plus, Trash2, Calendar, User, Database, ArrowRight, Upload, X, CheckSquare, Square, Share2, Search } from 'lucide-react';
+import { FileSpreadsheet, Plus, Trash2, Calendar, User, Database, ArrowRight, Upload, X, CheckSquare, Square, Share2, Search, Edit, Check } from 'lucide-react';
 import SpreadsheetView from '../components/SpreadsheetView';
 import { parseExcelOrCsv } from '../utils/excelParser';
 
 export default function SheetManager() {
-  const { sheets, createSheet, deleteSheet, shareSheet, currentUser, users, loadingSheets, sheetsError, addToast } = useCrm();
+  const { sheets, createSheet, updateSheetTitle, deleteSheet, shareSheet, currentUser, users, loadingSheets, sheetsError, addToast } = useCrm();
   const [newTitle, setNewTitle] = useState('');
   const [showAdd, setShowAdd] = useState(false);
   const [activeSheetId, setActiveSheetId] = useState(null);
@@ -27,6 +27,42 @@ export default function SheetManager() {
   const [searchTerm, setSearchTerm] = useState('');
   const [ownershipFilter, setOwnershipFilter] = useState('all');
   const [creatorFilter, setCreatorFilter] = useState('all');
+
+  // Rename states
+  const [editingSheetId, setEditingSheetId] = useState(null);
+  const [editTitleVal, setEditTitleVal] = useState('');
+
+  const handleStartEditTitle = (e, sheet) => {
+    e.stopPropagation();
+    setEditingSheetId(sheet.id);
+    setEditTitleVal(sheet.title);
+  };
+
+  const handleCancelEditTitle = () => {
+    setEditingSheetId(null);
+    setEditTitleVal('');
+  };
+
+  const handleSaveTitle = async (sheetId) => {
+    if (!editTitleVal.trim()) {
+      handleCancelEditTitle();
+      return;
+    }
+
+    const targetSheet = sheets.find(s => s.id === sheetId);
+    if (!targetSheet) return;
+
+    if (targetSheet.title === editTitleVal.trim()) {
+      handleCancelEditTitle();
+      return;
+    }
+
+    const result = await updateSheetTitle(sheetId, editTitleVal.trim());
+    if (result.success) {
+      addToast('Spreadsheet renamed successfully', 'success');
+    }
+    handleCancelEditTitle();
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -404,29 +440,76 @@ CREATE POLICY "Allow all for crm_sheets"
                     >
                       <div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
-                          <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 700, color: 'var(--crm-text)' }}>
-                            {s.title}
-                          </h3>
-                          <div style={{ display: 'flex', gap: 4 }}>
-                            {(currentUser?.id === s.created_by || currentUser?.roles?.includes('admin')) && (
+                          {editingSheetId === s.id ? (
+                            <div onClick={(e) => e.stopPropagation()} style={{ flex: 1, display: 'flex', gap: 4, alignItems: 'center' }}>
+                              <input
+                                type="text"
+                                className="crm-input"
+                                value={editTitleVal}
+                                onChange={(e) => setEditTitleVal(e.target.value)}
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter') handleSaveTitle(s.id);
+                                  if (e.key === 'Escape') handleCancelEditTitle();
+                                }}
+                                autoFocus
+                                style={{ padding: '4px 8px', fontSize: '0.9rem', height: 'auto', flex: 1 }}
+                              />
                               <button
+                                type="button"
                                 className="crm-btn crm-btn-ghost"
-                                onClick={(e) => handleOpenShareModal(e, s)}
-                                style={{ padding: 4, color: 'var(--crm-text-muted)' }}
-                                title="Share List"
+                                onClick={() => handleSaveTitle(s.id)}
+                                style={{ padding: 6, color: 'var(--crm-green)' }}
+                                title="Save Title"
                               >
-                                <Share2 size={16} />
+                                <Check size={16} />
                               </button>
-                            )}
-                            <button
-                              className="crm-btn crm-btn-ghost"
-                              onClick={(e) => handleDelete(e, s.id, s.title)}
-                              style={{ padding: 4, color: 'var(--crm-text-muted)' }}
-                              title="Delete List"
-                            >
-                              <Trash2 size={16} />
-                            </button>
-                          </div>
+                              <button
+                                type="button"
+                                className="crm-btn crm-btn-ghost"
+                                onClick={handleCancelEditTitle}
+                                style={{ padding: 6, color: 'var(--crm-red)' }}
+                                title="Cancel"
+                              >
+                                <X size={16} />
+                              </button>
+                            </div>
+                          ) : (
+                            <>
+                              <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 700, color: 'var(--crm-text)' }}>
+                                {s.title}
+                              </h3>
+                              <div style={{ display: 'flex', gap: 2 }}>
+                                {(currentUser?.id === s.created_by || currentUser?.roles?.includes('admin')) && (
+                                  <>
+                                    <button
+                                      className="crm-btn crm-btn-ghost"
+                                      onClick={(e) => handleStartEditTitle(e, s)}
+                                      style={{ padding: 4, color: 'var(--crm-text-muted)' }}
+                                      title="Rename List"
+                                    >
+                                      <Edit size={16} />
+                                    </button>
+                                    <button
+                                      className="crm-btn crm-btn-ghost"
+                                      onClick={(e) => handleOpenShareModal(e, s)}
+                                      style={{ padding: 4, color: 'var(--crm-text-muted)' }}
+                                      title="Share List"
+                                    >
+                                      <Share2 size={16} />
+                                    </button>
+                                  </>
+                                )}
+                                <button
+                                  className="crm-btn crm-btn-ghost"
+                                  onClick={(e) => handleDelete(e, s.id, s.title)}
+                                  style={{ padding: 4, color: 'var(--crm-text-muted)' }}
+                                  title="Delete List"
+                                >
+                                  <Trash2 size={16} />
+                                </button>
+                              </div>
+                            </>
+                          )}
                         </div>
                         <p style={{ fontSize: '0.8rem', color: 'var(--crm-text-secondary)', marginTop: 8 }}>
                           {rowCount} rows · {colCount} columns

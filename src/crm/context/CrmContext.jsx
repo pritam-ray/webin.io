@@ -507,6 +507,25 @@ export function CrmProvider({ children }) {
     return { success: true };
   };
 
+  const updateSheetTitle = async (sheetId, title) => {
+    const sheet = sheets.find(s => s.id === sheetId);
+    const oldTitle = sheet ? sheet.title : 'Spreadsheet';
+
+    const { error } = await supabase
+      .from('crm_sheets')
+      .update({ title })
+      .eq('id', sheetId);
+
+    if (error) {
+      addToast(error.message, 'error');
+      return { error };
+    }
+
+    await logActivity(null, 'Spreadsheet Renamed', `Renamed spreadsheet "${oldTitle}" to "${title}"`);
+    await fetchSheets();
+    return { success: true };
+  };
+
   const deleteSheet = async (sheetId) => {
     const sheet = sheets.find(s => s.id === sheetId);
     const { error } = await supabase
@@ -602,6 +621,7 @@ export function CrmProvider({ children }) {
     fetchSheets,
     createSheet,
     updateSheet,
+    updateSheetTitle,
     deleteSheet,
     shareSheet,
     addToast,
