@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "db:migrate": "node scripts/migrate.cjs"
   },
   "devDependencies": {
     "typescript": "~6.0.2",
@@ -15,10 +16,13 @@
   "dependencies": {
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.6.1",
+    "@supabase/supabase-js": "^2.110.7",
     "framer-motion": "^12.41.0",
     "lucide-react": "^1.21.0",
+    "pg": "^8.22.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
-    "three": "^0.184.0"
+    "three": "^0.184.0",
+    "xlsx": "^0.18.5"
   }
 }

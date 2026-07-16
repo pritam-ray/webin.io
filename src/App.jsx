@@ -13,10 +13,16 @@ import Footer from './components/Footer';
 import CustomCursor from './components/CustomCursor';
 import WhatsAppButton from './components/WhatsAppButton';
 import EstimateGenerator from './components/EstimateGenerator';
+import CrmApp from './crm/CrmApp';
 import './App.css';
 
 function App() {
   const isEstimateRoute = window.location.pathname === '/estimate-generator';
+  const isCrmRoute = window.location.pathname.startsWith('/crm');
+
+  if (isCrmRoute) {
+    return <CrmApp />;
+  }
 
   if (isEstimateRoute) {
     return <EstimateGenerator />;
