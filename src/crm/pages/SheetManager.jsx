@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { useCrm } from '../context/CrmContext';
-import { FileSpreadsheet, Plus, Trash2, Calendar, User, Database, ArrowRight, Upload } from 'lucide-react';
+import { FileSpreadsheet, Plus, Trash2, Calendar, User, Database, ArrowRight, Upload, X, CheckSquare, Square } from 'lucide-react';
 import SpreadsheetView from '../components/SpreadsheetView';
 import { parseExcelOrCsv } from '../utils/excelParser';
 
@@ -11,6 +11,11 @@ export default function SheetManager() {
   const [activeSheetId, setActiveSheetId] = useState(null);
   const [importing, setImporting] = useState(false);
   const fileInputRef = useRef(null);
+
+  // Multi-sheet import states
+  const [showImportModal, setShowImportModal] = useState(false);
+  const [importSheets, setImportSheets] = useState([]);
+  const [importBaseName, setImportBaseName] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -31,20 +36,59 @@ export default function SheetManager() {
     setImporting(true);
 
     try {
-      const { columns, rows } = await parseExcelOrCsv(file);
-      // Strip extension
+      const parsedSheets = await parseExcelOrCsv(file);
       const fileName = file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
-      const formattedTitle = fileName.replace(/[_-]/g, ' ').trim();
-      
-      const result = await createSheet(formattedTitle, columns, rows);
-      if (!result.error && result.data) {
-        setActiveSheetId(result.data.id);
+      const formattedBaseName = fileName.replace(/[_-]/g, ' ').trim();
+
+      if (parsedSheets.length === 1) {
+        const { columns, rows, name } = parsedSheets[0];
+        const finalTitle = name === 'Sheet1' ? formattedBaseName : `${formattedBaseName} - ${name}`;
+        const result = await createSheet(finalTitle, columns, rows);
+        if (!result.error && result.data) {
+          setActiveSheetId(result.data.id);
+        }
+      } else {
+        // Multi-sheet workbook: open tab selector dialog
+        setImportBaseName(formattedBaseName);
+        setImportSheets(parsedSheets.map(s => ({ ...s, selected: true })));
+        setShowImportModal(true);
       }
     } catch (err) {
       addToast(err.message, 'error');
     } finally {
       setImporting(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
+  const executeMultiImport = async () => {
+    const selected = importSheets.filter(s => s.selected);
+    if (selected.length === 0) {
+      addToast('Please select at least one sheet tab to import', 'error');
+      return;
+    }
+
+    setImporting(true);
+    setShowImportModal(false);
+
+    let lastCreatedId = null;
+
+    try {
+      for (const sheet of selected) {
+        const title = `${importBaseName} - ${sheet.name}`;
+        const result = await createSheet(title, sheet.columns, sheet.rows);
+        if (!result.error && result.data) {
+          lastCreatedId = result.data.id;
+        }
+      }
+      addToast(`Imported ${selected.length} sheets successfully`, 'success');
+    } catch (err) {
+      addToast(err.message, 'error');
+    } finally {
+      setImporting(false);
+      if (lastCreatedId) {
+        setActiveSheetId(lastCreatedId);
+      }
     }
   };
 
@@ -242,6 +286,117 @@ CREATE POLICY "Allow all for crm_sheets"
               </div>
             );
           })}
+        </div>
+      )}
+
+      {/* Multi-sheet Import Modal */}
+      {showImportModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0, 0, 0, 0.75)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 9999,
+          backdropFilter: 'blur(4px)'
+        }}>
+          <div style={{
+            background: 'var(--crm-bg-elevated)',
+            border: '1px solid var(--crm-border)',
+            borderRadius: 'var(--crm-radius)',
+            width: '100%',
+            maxWidth: '520px',
+            boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.3)',
+            padding: 24,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 16
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--crm-border)', paddingBottom: 12 }}>
+              <h3 style={{ margin: 0, color: 'var(--crm-text)' }}>Select Excel Sheet Tabs to Import</h3>
+              <button className="crm-btn-ghost" onClick={() => setShowImportModal(false)} style={{ color: 'var(--crm-text-muted)', padding: 4 }}>
+                <X size={20} />
+              </button>
+            </div>
+
+            <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--crm-text-secondary)' }}>
+              We found multiple sheets in <strong>{importBaseName}</strong>. Select the tabs you want to import as separate client lists:
+            </p>
+
+            <div style={{ display: 'flex', gap: 12, fontSize: '0.78rem' }}>
+              <button
+                type="button"
+                className="crm-btn-link"
+                onClick={() => setImportSheets(prev => prev.map(s => ({ ...s, selected: true })))}
+                style={{ color: 'var(--crm-accent)', padding: 0 }}
+              >
+                Select All
+              </button>
+              <span style={{ color: 'var(--crm-text-muted)' }}>|</span>
+              <button
+                type="button"
+                className="crm-btn-link"
+                onClick={() => setImportSheets(prev => prev.map(s => ({ ...s, selected: false })))}
+                style={{ color: 'var(--crm-text-muted)', padding: 0 }}
+              >
+                Clear All
+              </button>
+            </div>
+
+            <div style={{
+              maxHeight: '220px',
+              overflowY: 'auto',
+              border: '1px solid var(--crm-border)',
+              borderRadius: 6,
+              background: 'var(--crm-bg-card)'
+            }}>
+              {importSheets.map((sheetOpt, index) => (
+                <div
+                  key={index}
+                  onClick={() => setImportSheets(prev => prev.map((s, i) => i === index ? { ...s, selected: !s.selected } : s))}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '12px 16px',
+                    borderBottom: index < importSheets.length - 1 ? '1px solid var(--crm-border)' : 'none',
+                    cursor: 'pointer',
+                    background: sheetOpt.selected ? 'rgba(59, 130, 246, 0.05)' : 'transparent',
+                    transition: 'background 0.2s'
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    {sheetOpt.selected ? (
+                      <CheckSquare size={18} style={{ color: 'var(--crm-accent)' }} />
+                    ) : (
+                      <Square size={18} style={{ color: 'var(--crm-text-muted)' }} />
+                    )}
+                    <span style={{ fontWeight: sheetOpt.selected ? 600 : 400, color: 'var(--crm-text)' }}>{sheetOpt.name}</span>
+                  </div>
+                  <span style={{ fontSize: '0.78rem', color: 'var(--crm-text-muted)' }}>
+                    {sheetOpt.rows.length} rows · {sheetOpt.columns.length} columns
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 8 }}>
+              <button className="crm-btn crm-btn-secondary crm-btn-sm" onClick={() => setShowImportModal(false)}>
+                Cancel
+              </button>
+              <button
+                className="crm-btn crm-btn-primary crm-btn-sm"
+                onClick={executeMultiImport}
+                disabled={importSheets.every(s => !s.selected)}
+              >
+                Import Selected ({importSheets.filter(s => s.selected).length})
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
