@@ -406,6 +406,10 @@
   border: 1px solid var(--crm-border);
   border-radius: var(--crm-radius);
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1;
 }
 
 .crm-table-toolbar {
@@ -465,7 +469,8 @@
 }
 
 .crm-table-container {
-  overflow-x: auto;
+  overflow: auto;
+  flex: 1;
 }
 
 .crm-table {
@@ -476,6 +481,9 @@
 
 .crm-table thead {
   background: var(--crm-bg-elevated);
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
 
 .crm-table th {
