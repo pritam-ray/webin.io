@@ -163,7 +163,7 @@ CREATE POLICY "Allow all for crm_sheets"
   // 2. Render active Spreadsheet View if selected
   if (activeSheetId) {
     return (
-      <div className="crm-content">
+      <div className="crm-content" style={{ maxWidth: 'none', width: '100%', height: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden', padding: '24px 32px 16px 32px' }}>
         <SpreadsheetView
           sheetId={activeSheetId}
           onBack={() => setActiveSheetId(null)}

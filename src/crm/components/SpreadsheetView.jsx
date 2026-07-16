@@ -232,7 +232,7 @@ export default function SpreadsheetView({ sheetId, onBack }) {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 120px)', gap: 16 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', gap: 16, overflow: 'hidden' }}>
       {/* Header bar */}
       <div className="crm-page-header" style={{ marginBottom: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
