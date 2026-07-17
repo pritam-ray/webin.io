@@ -35,53 +35,116 @@ export default function CsvUploader({ onImportComplete }) {
         // Pick the sheet with the most rows, fallback to the first sheet
         const sheet = sheetsToProcess.sort((a, b) => b.rows.length - a.rows.length)[0] || sheetsData[0];
         
+        // Debug: log the columns found so we can troubleshoot mapping issues
+        console.log('[CRM Lead Import] Sheet:', sheet.name, 'Columns:', sheet.columns.map(c => c.label));
+
         const mappedLeads = sheet.rows.map(row => {
           const leadObj = { name: '', phone: '', email: '', company: '', city: '', notes: '' };
+
+          // Build a lookup of all column values for this row
+          const colValues = {};
           sheet.columns.forEach(col => {
-            const colLabel = col.label.toLowerCase().trim();
             const cellVal = row[col.id] ? row[col.id].toString().trim() : '';
-            
-            // Name matching: prioritize primary lead name, prevent director name collision
-            if (
-              (colLabel === 'name' || colLabel.includes('lead name') || colLabel.includes('contact name') || colLabel === 'contact') && 
-              !colLabel.includes('director') && 
-              !colLabel.includes('company') && 
-              !colLabel.includes('business')
+            colValues[col.id] = cellVal;
+          });
+
+          // Score each column against each lead field to find the best match
+          // Higher score = better match. We pick the highest-scoring column for each field.
+          const fieldScores = { name: [], phone: [], email: [], company: [], city: [], notes: [] };
+
+          sheet.columns.forEach(col => {
+            const label = col.label.toLowerCase().trim();
+            const val = colValues[col.id];
+            if (!val) return; // skip empty cells
+
+            // ─── NAME matching ───
+            if (label === 'name' || label === 'lead name' || label === 'contact name' || label === 'full name' || label === 'customer name' || label === 'client name') {
+              fieldScores.name.push({ id: col.id, score: 10 });
+            } else if (label === 'first name' || label === 'firstname') {
+              fieldScores.name.push({ id: col.id, score: 8 });
+            } else if (
+              (label.includes('name') && !label.includes('company') && !label.includes('firm') && !label.includes('business') && !label.includes('file') && !label.includes('sheet'))
             ) {
-              leadObj.name = cellVal;
-            }
-            else if (colLabel.includes('name') && !leadObj.name && !colLabel.includes('director') && !colLabel.includes('company') && !colLabel.includes('business')) {
-              leadObj.name = cellVal;
-            }
-
-            // Phone matching
-            if (colLabel.includes('phone') || colLabel.includes('mobile') || colLabel.includes('contact') || colLabel.includes('number')) {
-              leadObj.phone = cellVal;
+              // Generic name match, but deprioritized for director names  
+              const score = label.includes('director') ? 3 : 5;
+              fieldScores.name.push({ id: col.id, score });
             }
 
-            // Email matching
-            if (colLabel.includes('email') || colLabel.includes('mail') || colLabel === 'email id') {
-              leadObj.email = cellVal;
+            // ─── PHONE matching ───
+            if (label === 'phone' || label === 'phones' || label === 'mobile' || label === 'phone number' || label === 'mobile number' || label === 'cell' || label === 'telephone') {
+              fieldScores.phone.push({ id: col.id, score: 10 });
+            } else if (label === 'phone no' || label === 'mobile no' || label === 'phone_no' || label === 'mobile_no' || label === 'contact number' || label === 'contact no' || label === 'contact_no' || label === 'tel' || label === 'tel no') {
+              fieldScores.phone.push({ id: col.id, score: 9 });
+            } else if (label.includes('phone') || label.includes('mobile') || label.includes('cell') || label.includes('whatsapp') || label.includes('telephone')) {
+              fieldScores.phone.push({ id: col.id, score: 6 });
+            } else if (
+              (label.includes('contact') && (label.includes('no') || label.includes('num'))) ||
+              (label.includes('number') && !label.includes('cin') && !label.includes('registration') && !label.includes('gst') && !label.includes('pan') && !label.includes('serial') && !label.includes('sr') && !label.includes('s.no') && !label.includes('sno') && !label.includes('sl'))
+            ) {
+              fieldScores.phone.push({ id: col.id, score: 4 });
             }
 
-            // Company matching: prioritize company name over business description
-            if (colLabel === 'company name' || colLabel === 'company' || colLabel === 'firm name' || colLabel === 'firm') {
-              leadObj.company = cellVal;
-            }
-            else if ((colLabel.includes('company') || colLabel.includes('org') || colLabel.includes('business')) && !leadObj.company && !colLabel.includes('activity') && !colLabel.includes('type')) {
-              leadObj.company = cellVal;
+            // ─── EMAIL matching ───
+            if (label === 'email' || label === 'emails' || label === 'email id' || label === 'email_id' || label === 'emailid' || label === 'e-mail' || label === 'mail') {
+              fieldScores.email.push({ id: col.id, score: 10 });
+            } else if (label === 'email address' || label === 'email_address') {
+              fieldScores.email.push({ id: col.id, score: 9 });
+            } else if (label.includes('email') || label.includes('e-mail') || label.includes('mail')) {
+              fieldScores.email.push({ id: col.id, score: 5 });
+            } else if (!val.includes(' ') && val.includes('@') && val.includes('.')) {
+              // Fallback: cell looks like an email address even if column name doesn't say so
+              fieldScores.email.push({ id: col.id, score: 2 });
             }
 
-            // City matching
-            if (colLabel.includes('city') || colLabel.includes('location') || colLabel === 'place' || colLabel === 'district') {
-              leadObj.city = cellVal;
+            // ─── COMPANY matching ───
+            if (label === 'company' || label === 'company name' || label === 'company_name' || label === 'firm' || label === 'firm name' || label === 'firm_name' || label === 'organization') {
+              fieldScores.company.push({ id: col.id, score: 10 });
+            } else if (
+              (label.includes('company') || label.includes('org') || label.includes('firm') || label.includes('business')) &&
+              !label.includes('activity') && !label.includes('type') && !label.includes('class') && !label.includes('category') && !label.includes('status')
+            ) {
+              fieldScores.company.push({ id: col.id, score: 5 });
             }
 
-            // Notes / Activity description matching
-            if (colLabel.includes('note') || colLabel.includes('remark') || colLabel.includes('comment') || colLabel.includes('description') || colLabel.includes('activity')) {
-              leadObj.notes = cellVal;
+            // ─── CITY matching ───
+            if (label === 'city' || label === 'location' || label === 'place' || label === 'district' || label === 'town') {
+              fieldScores.city.push({ id: col.id, score: 10 });
+            } else if (label.includes('city') || label.includes('location') || label.includes('district')) {
+              fieldScores.city.push({ id: col.id, score: 5 });
+            } else if (label === 'state' || label === 'address') {
+              fieldScores.city.push({ id: col.id, score: 2 });
+            }
+
+            // ─── NOTES matching ───
+            if (label === 'notes' || label === 'note' || label === 'remarks' || label === 'remark' || label === 'comments' || label === 'comment') {
+              fieldScores.notes.push({ id: col.id, score: 10 });
+            } else if (label.includes('note') || label.includes('remark') || label.includes('comment') || label.includes('description')) {
+              fieldScores.notes.push({ id: col.id, score: 5 });
+            } else if (label.includes('activity') && !label.includes('code') && !label.includes('class')) {
+              fieldScores.notes.push({ id: col.id, score: 3 });
             }
           });
+
+          // For each field, pick the column with the highest score
+          const usedColIds = new Set();
+          ['name', 'email', 'phone', 'company', 'city', 'notes'].forEach(field => {
+            const candidates = fieldScores[field]
+              .filter(c => !usedColIds.has(c.id)) // don't reuse a column for multiple fields
+              .sort((a, b) => b.score - a.score);
+            if (candidates.length > 0) {
+              leadObj[field] = colValues[candidates[0].id];
+              usedColIds.add(candidates[0].id);
+            }
+          });
+
+          // Clean sentinel/placeholder values commonly found in scraped datasets
+          const sentinels = ['no_email', 'no_contact', 'no_phone', 'no_linkedin', 'n/a', 'na', 'none', 'null', 'undefined', '-', '--', '---'];
+          Object.keys(leadObj).forEach(key => {
+            if (sentinels.includes(leadObj[key].toLowerCase())) {
+              leadObj[key] = '';
+            }
+          });
+
           return leadObj;
         });
 

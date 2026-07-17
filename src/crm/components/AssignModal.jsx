@@ -8,7 +8,7 @@ export default function AssignModal({ leadIds = [], onClose }) {
   const [selectedUser, setSelectedUser] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const salesUsers = users.filter(u => u.role === 'sales');
+  const salesUsers = users.filter(u => u.roles?.includes('sales'));
 
   const handleAssign = async () => {
     if (!selectedUser || !leadIds.length) return;
@@ -56,7 +56,7 @@ export default function AssignModal({ leadIds = [], onClose }) {
                       transition: 'all 0.2s',
                     }}
                   >
-                    <div className="crm-user-avatar" style={{ background: ROLE_COLORS[user.role], width: 38, height: 38 }}>
+                    <div className="crm-user-avatar" style={{ background: ROLE_COLORS[user.roles?.[0] || 'sales'], width: 38, height: 38 }}>
                       {initials}
                     </div>
                     <div style={{ flex: 1 }}>

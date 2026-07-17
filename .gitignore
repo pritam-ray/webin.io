@@ -29,3 +29,12 @@ dist-ssr
 .env.local
 .env.production.local
 .env.test.local
+
+# Lead Excel/CSV files
+*.xlsx
+*.xls
+*.csv
+
+# Local scratch scripts
+scratch/
+
