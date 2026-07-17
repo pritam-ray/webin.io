@@ -547,6 +547,10 @@ export function CrmProvider({ children }) {
   };
 
   const deleteSheet = async (sheetId) => {
+    if (!currentUser?.roles?.includes('admin')) {
+      addToast('Only administrators can delete client lists', 'error');
+      return { error: new Error('Permission denied') };
+    }
     const sheet = sheets.find(s => s.id === sheetId);
     const { error } = await supabase
       .from('crm_sheets')

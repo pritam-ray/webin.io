@@ -142,6 +142,10 @@ export default function SheetManager() {
 
   const handleDelete = async (e, sheetId, title) => {
     e.stopPropagation();
+    if (!isAdmin) {
+      addToast('Only administrators can delete client lists', 'error');
+      return;
+    }
     if (confirm(`Are you sure you want to delete the spreadsheet "${title}"? This action cannot be undone.`)) {
       await deleteSheet(sheetId);
     }
@@ -500,14 +504,16 @@ CREATE POLICY "Allow all for crm_sheets"
                                     </button>
                                   </>
                                 )}
-                                <button
-                                  className="crm-btn crm-btn-ghost"
-                                  onClick={(e) => handleDelete(e, s.id, s.title)}
-                                  style={{ padding: 4, color: 'var(--crm-text-muted)' }}
-                                  title="Delete List"
-                                >
-                                  <Trash2 size={16} />
-                                </button>
+                                {isAdmin && (
+                                  <button
+                                    className="crm-btn crm-btn-ghost"
+                                    onClick={(e) => handleDelete(e, s.id, s.title)}
+                                    style={{ padding: 4, color: 'var(--crm-text-muted)' }}
+                                    title="Delete List"
+                                  >
+                                    <Trash2 size={16} />
+                                  </button>
+                                )}
                               </div>
                             </>
                           )}

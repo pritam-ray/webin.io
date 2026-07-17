@@ -4,7 +4,8 @@ import { ArrowLeft, Plus, Trash2, Download, CloudLightning, Save, HelpCircle, Up
 import { parseExcelOrCsv } from '../utils/excelParser';
 
 export default function SpreadsheetView({ sheetId, onBack }) {
-  const { sheets, updateSheet, addToast, logCrmActivity } = useCrm();
+  const { sheets, updateSheet, addToast, logCrmActivity, currentUser } = useCrm();
+  const isAdmin = currentUser?.roles?.includes('admin');
   const sheet = sheets.find(s => s.id === sheetId);
 
   const [columns, setColumns] = useState([]);
@@ -129,6 +130,10 @@ export default function SpreadsheetView({ sheetId, onBack }) {
   };
 
   const deleteRow = (absoluteRowIndex) => {
+    if (!isAdmin) {
+      addToast('Only administrators can delete rows/leads', 'error');
+      return;
+    }
     const updatedRows = rows.filter((_, idx) => idx !== absoluteRowIndex);
     setRows(updatedRows);
 
@@ -178,6 +183,10 @@ export default function SpreadsheetView({ sheetId, onBack }) {
   };
 
   const deleteColumn = (colId, colLabel) => {
+    if (!isAdmin) {
+      addToast('Only administrators can delete columns', 'error');
+      return;
+    }
     if (confirm(`Are you sure you want to delete the column "${colLabel}"? All cell data in this column will be lost.`)) {
       const updatedCols = columns.filter(col => col.id !== colId);
       const updatedRows = rows.map(row => {
@@ -821,7 +830,7 @@ export default function SpreadsheetView({ sheetId, onBack }) {
                               </button>
 
                               {/* Delete Column button */}
-                              {col.id !== 'col_name' && (
+                              {col.id !== 'col_name' && isAdmin && (
                                 <button
                                   type="button"
                                   className="crm-btn-ghost"
@@ -899,14 +908,16 @@ export default function SpreadsheetView({ sheetId, onBack }) {
                               background: isSelected ? 'rgba(99, 102, 241, 0.08)' : 'var(--crm-bg-card)', 
                               padding: 8 
                             }}>
-                              <button
-                                className="crm-btn crm-btn-ghost crm-btn-sm"
-                                onClick={() => deleteRow(absoluteRowIndex)}
-                                style={{ padding: 4, color: 'var(--crm-red)', display: 'inline-flex' }}
-                                title="Delete row"
-                              >
-                                <Trash2 size={14} />
-                              </button>
+                              {isAdmin && (
+                                <button
+                                  className="crm-btn crm-btn-ghost crm-btn-sm"
+                                  onClick={() => deleteRow(absoluteRowIndex)}
+                                  style={{ padding: 4, color: 'var(--crm-red)', display: 'inline-flex' }}
+                                  title="Delete row"
+                                >
+                                  <Trash2 size={14} />
+                                </button>
+                              )}
                             </td>
 
                             {/* Row Cells */}
