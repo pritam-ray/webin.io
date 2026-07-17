@@ -8,6 +8,8 @@ export default function ForwardModal({ leadId, onClose }) {
   const [selectedUser, setSelectedUser] = useState('');
   const [loading, setLoading] = useState(false);
 
+  const isAdmin = currentUser?.roles?.includes('admin');
+
   // Show all team members except the current user
   const forwardableUsers = users.filter(u => u.id !== currentUser?.id);
 
@@ -57,7 +59,7 @@ export default function ForwardModal({ leadId, onClose }) {
                   <div style={{ flex: 1 }}>
                     <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{user.name}</div>
                     <div style={{ fontSize: '0.78rem', color: 'var(--crm-text-secondary)' }}>
-                      {ROLE_LABELS[user.role]} · {user.email}
+                      {ROLE_LABELS[user.role]}{isAdmin ? ` · ${user.email}` : ''}
                     </div>
                   </div>
                   {selectedUser === user.id && (

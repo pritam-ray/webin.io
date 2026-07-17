@@ -1,18 +1,23 @@
 import { useState, useEffect } from 'react';
 import { useCrm } from '../context/CrmContext';
 import { ROLE_COLORS, ROLE_LABELS } from '../utils/constants';
-import { Users, UserPlus, FileText, TrendingUp, Trophy, XCircle, Edit, Trash2, Clock, Search, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
+import { Users, UserPlus, FileText, TrendingUp, Trophy, XCircle, Edit, Trash2, Clock, Search, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, UserCheck, UserX } from 'lucide-react';
 import StatsCard from '../components/StatsCard';
 import LeadTable from '../components/LeadTable';
 import TeamMemberModal from '../components/TeamMemberModal';
 import LeadDetailModal from '../components/LeadDetailModal';
+import AssignModal from '../components/AssignModal';
 
 export default function AdminDashboard({ initialTab = 'overview' }) {
-  const { users, leads, deleteUser, getStats, fetchGlobalActivity } = useCrm();
+  const { users, leads, deleteUser, getStats, fetchGlobalActivity, unassignLeadsBulk } = useCrm();
   const [tab, setTab] = useState(initialTab);
   const [showAddMember, setShowAddMember] = useState(false);
   const [editMember, setEditMember] = useState(null);
   const [selectedLead, setSelectedLead] = useState(null);
+
+  // Selection state
+  const [selectedIds, setSelectedIds] = useState([]);
+  const [showAssign, setShowAssign] = useState(false);
 
   // Audit Logs State
   const [logs, setLogs] = useState([]);
@@ -35,12 +40,19 @@ export default function AdminDashboard({ initialTab = 'overview' }) {
 
   const handleTabChange = async (newTab) => {
     setTab(newTab);
+    setSelectedIds([]);
     if (newTab === 'audit') {
       setLoadingLogs(true);
       const { data } = await fetchGlobalActivity();
       setLogs(data || []);
       setLoadingLogs(false);
     }
+  };
+
+  const handleUnassignSelected = async () => {
+    if (!window.confirm(`Are you sure you want to unassign ${selectedIds.length} lead(s)?`)) return;
+    await unassignLeadsBulk(selectedIds);
+    setSelectedIds([]);
   };
 
   return (
@@ -154,7 +166,30 @@ export default function AdminDashboard({ initialTab = 'overview' }) {
           users={users}
           showAssignee
           showStatus
+          showCheckbox
+          selectedIds={selectedIds}
+          onSelectChange={setSelectedIds}
           onRowClick={lead => setSelectedLead(lead)}
+          actions={
+            selectedIds.length > 0 && (
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button
+                  className="crm-btn crm-btn-secondary crm-btn-sm"
+                  onClick={handleUnassignSelected}
+                  style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+                >
+                  <UserX size={14} /> Unassign {selectedIds.length} Lead{selectedIds.length > 1 ? 's' : ''}
+                </button>
+                <button
+                  className="crm-btn crm-btn-primary crm-btn-sm"
+                  onClick={() => setShowAssign(true)}
+                  style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+                >
+                  <UserCheck size={14} /> Assign {selectedIds.length} Lead{selectedIds.length > 1 ? 's' : ''}
+                </button>
+              </div>
+            )
+          }
         />
       )}
 
@@ -315,6 +350,15 @@ export default function AdminDashboard({ initialTab = 'overview' }) {
       {showAddMember && <TeamMemberModal onClose={() => setShowAddMember(false)} />}
       {editMember && <TeamMemberModal member={editMember} onClose={() => setEditMember(null)} />}
       {selectedLead && <LeadDetailModal lead={selectedLead} onClose={() => setSelectedLead(null)} />}
+      {showAssign && (
+        <AssignModal
+          leadIds={selectedIds}
+          onClose={() => {
+            setShowAssign(false);
+            setSelectedIds([]);
+          }}
+        />
+      )}
     </div>
   );
 }

@@ -6,6 +6,7 @@ import { parseExcelOrCsv } from '../utils/excelParser';
 
 export default function SheetManager() {
   const { sheets, createSheet, updateSheetTitle, deleteSheet, shareSheet, currentUser, users, loadingSheets, sheetsError, addToast } = useCrm();
+  const isAdmin = currentUser?.roles?.includes('admin');
   const [newTitle, setNewTitle] = useState('');
   const [showAdd, setShowAdd] = useState(false);
   const [activeSheetId, setActiveSheetId] = useState(null);
@@ -709,7 +710,7 @@ CREATE POLICY "Allow all for crm_sheets"
                 .filter(u => u.id !== currentUser?.id)
                 .filter(u => {
                   const q = shareSearch.toLowerCase();
-                  return u.name?.toLowerCase().includes(q) || u.email?.toLowerCase().includes(q);
+                  return u.name?.toLowerCase().includes(q) || (isAdmin && u.email?.toLowerCase().includes(q));
                 })
                 .map((member) => {
                   const isShared = sharedUsers.includes(member.id);
@@ -751,7 +752,9 @@ CREATE POLICY "Allow all for crm_sheets"
                         </div>
                         <div>
                           <span style={{ fontWeight: isShared ? 600 : 400, color: 'var(--crm-text)', fontSize: '0.9rem', display: 'block' }}>{member.name}</span>
-                          <span style={{ fontSize: '0.75rem', color: 'var(--crm-text-muted)', display: 'block' }}>{member.email}</span>
+                          {isAdmin && (
+                            <span style={{ fontSize: '0.75rem', color: 'var(--crm-text-muted)', display: 'block' }}>{member.email}</span>
+                          )}
                         </div>
                       </div>
                       <div style={{ display: 'flex', gap: 4 }}>

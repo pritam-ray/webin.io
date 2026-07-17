@@ -342,6 +342,26 @@ export function CrmProvider({ children }) {
     return { success: true };
   };
 
+  const unassignLeadsBulk = async (leadIds) => {
+    const { error } = await supabase
+      .from('crm_leads')
+      .update({ assigned_to: null, status: 'new' })
+      .in('id', leadIds);
+
+    if (error) {
+      addToast(error.message, 'error');
+      return { error };
+    }
+
+    for (const id of leadIds) {
+      await logActivity(id, 'Lead Unassigned', 'Lead was unassigned');
+    }
+
+    await fetchLeads();
+    addToast(`${leadIds.length} lead${leadIds.length > 1 ? 's' : ''} unassigned successfully`, 'success');
+    return { success: true };
+  };
+
   const updateLeadStatus = async (leadId, status) => {
     const { error } = await supabase
       .from('crm_leads')
@@ -607,6 +627,7 @@ export function CrmProvider({ children }) {
     addLeadsBulk,
     assignLead,
     assignLeadsBulk,
+    unassignLeadsBulk,
     updateLeadStatus,
     updateLead,
     forwardLead,

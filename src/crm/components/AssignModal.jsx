@@ -4,10 +4,11 @@ import { useCrm } from '../context/CrmContext';
 import { ROLE_COLORS, ROLE_LABELS } from '../utils/constants';
 
 export default function AssignModal({ leadIds = [], onClose }) {
-  const { users, assignLeadsBulk } = useCrm();
+  const { users, assignLeadsBulk, currentUser } = useCrm();
   const [selectedUser, setSelectedUser] = useState('');
   const [loading, setLoading] = useState(false);
 
+  const isAdmin = currentUser?.roles?.includes('admin');
   const salesUsers = users.filter(u => u.roles?.includes('sales'));
 
   const handleAssign = async () => {
@@ -61,7 +62,9 @@ export default function AssignModal({ leadIds = [], onClose }) {
                     </div>
                     <div style={{ flex: 1 }}>
                       <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{user.name}</div>
-                      <div style={{ fontSize: '0.78rem', color: 'var(--crm-text-secondary)' }}>{user.email}</div>
+                      {isAdmin && (
+                        <div style={{ fontSize: '0.78rem', color: 'var(--crm-text-secondary)' }}>{user.email}</div>
+                      )}
                     </div>
                     {selectedUser === user.id && (
                       <div style={{ color: 'var(--crm-accent)', fontWeight: 600, fontSize: '0.82rem' }}>Selected</div>

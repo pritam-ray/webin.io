@@ -5,13 +5,24 @@ import { STATUS_LABELS, PACKAGES } from '../utils/constants';
 import ForwardModal from './ForwardModal';
 
 export default function LeadDetailModal({ lead, onClose }) {
-  const { getActivityLog, updateLead, updateLeadStatus, closeDeal, currentUser, logActivity } = useCrm();
+  const { getActivityLog, updateLead, updateLeadStatus, closeDeal, currentUser, logActivity, users, unassignLeadsBulk } = useCrm();
   const [activities, setActivities] = useState([]);
   const [showForward, setShowForward] = useState(false);
   const [notes, setNotes] = useState(lead.notes || '');
   const [requirements, setRequirements] = useState(lead.requirements || '');
   const [selectedPkg, setSelectedPkg] = useState(lead.package || '');
   const [saving, setSaving] = useState(false);
+
+  const getAssigneeName = (userId) => {
+    const u = users.find(x => x.id === userId);
+    return u ? u.name : 'Unknown';
+  };
+
+  const handleUnassignSingle = async () => {
+    if (!window.confirm('Are you sure you want to unassign this lead?')) return;
+    await unassignLeadsBulk([lead.id]);
+    onClose();
+  };
 
   useEffect(() => {
     loadActivities();
@@ -91,6 +102,23 @@ export default function LeadDetailModal({ lead, onClose }) {
                 <label>City</label>
                 <span>{lead.city || '—'}</span>
               </div>
+              {lead.assigned_to && (
+                <div className="crm-lead-field">
+                  <label>Assigned To</label>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span>{getAssigneeName(lead.assigned_to)}</span>
+                    {(isAdmin || currentUser?.roles?.includes('admin')) && (
+                      <button
+                        className="crm-btn crm-btn-ghost"
+                        onClick={handleUnassignSingle}
+                        style={{ padding: '2px 6px', fontSize: '0.7rem', color: 'var(--crm-red)', border: '1px solid rgba(239, 68, 68, 0.15)', borderRadius: 'var(--crm-radius-sm)', cursor: 'pointer', height: 'auto', background: 'transparent' }}
+                      >
+                        Unassign
+                      </button>
+                    )}
+                  </span>
+                </div>
+              )}
               {lead.package && (
                 <div className="crm-lead-field">
                   <label>Package</label>

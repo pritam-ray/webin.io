@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { STATUS_LABELS, STATUS_COLORS, LEAD_STATUSES } from '../utils/constants';
-import { Search, ChevronDown, ChevronUp } from 'lucide-react';
+import { Search, ChevronDown, ChevronUp, Shuffle } from 'lucide-react';
+import { useCrm } from '../context/CrmContext';
 
 export default function LeadTable({
   leads,
@@ -18,10 +19,12 @@ export default function LeadTable({
   filterStatuses,
   extraColumns,
 }) {
+  const { addToast } = useCrm();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [sortField, setSortField] = useState('created_at');
   const [sortDir, setSortDir] = useState('desc');
+  const [randomQty, setRandomQty] = useState('');
 
   const toggleSort = (field) => {
     if (sortField === field) {
@@ -63,6 +66,26 @@ export default function LeadTable({
     if (va > vb) return sortDir === 'asc' ? 1 : -1;
     return 0;
   });
+
+  const handleRandomSelect = () => {
+    const qty = parseInt(randomQty, 10);
+    if (isNaN(qty) || qty <= 0) {
+      addToast('Please enter a valid positive number', 'error');
+      return;
+    }
+
+    if (sorted.length === 0) {
+      addToast('No leads available in the current list to select', 'error');
+      return;
+    }
+
+    // Shuffle leads currently matching the filter/search (sorted)
+    const shuffled = [...sorted].sort(() => 0.5 - Math.random());
+    const selected = shuffled.slice(0, Math.min(qty, sorted.length)).map(l => l.id);
+
+    onSelectChange?.(selected);
+    addToast(`Successfully selected ${selected.length} random lead${selected.length > 1 ? 's' : ''}`, 'success');
+  };
 
   const allSelected = sorted.length > 0 && sorted.every(l => selectedIds.includes(l.id));
 
@@ -115,6 +138,33 @@ export default function LeadTable({
                 <option key={s} value={s}>{STATUS_LABELS[s]}</option>
               ))}
             </select>
+          )}
+          {showCheckbox && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <input
+                type="number"
+                min="1"
+                placeholder="Qty..."
+                value={randomQty}
+                onChange={e => setRandomQty(e.target.value)}
+                onKeyDown={e => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleRandomSelect();
+                  }
+                }}
+                className="crm-input"
+                style={{ width: 80, padding: '8px 10px', fontSize: '0.82rem', height: '36px' }}
+              />
+              <button
+                type="button"
+                className="crm-btn crm-btn-secondary crm-btn-sm"
+                onClick={handleRandomSelect}
+                style={{ height: '36px', padding: '0 12px', fontSize: '0.82rem', display: 'inline-flex', alignItems: 'center', gap: 6 }}
+              >
+                <Shuffle size={14} /> Select Random
+              </button>
+            </div>
           )}
           {actions}
         </div>
